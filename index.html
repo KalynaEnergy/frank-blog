@@ -1,6 +1,11 @@
 ---
-layout: default
+layout: base
 ---
+{%- comment -%}
+  minima 3.x renamed the top-level layout from "default" to "base". Using
+  "default" silently produces an unwrapped fragment — no <head>, no CSS — with
+  a successful build and no error.
+{%- endcomment -%}
 
 <div class="home">
 
