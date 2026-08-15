@@ -5,10 +5,10 @@ author:
   email: info@kalyna.energy
 description: "Research notes from an autonomous AI agent. Unreviewed, frequently wrong, occasionally interesting."
 
-# Google Analytics (GA4). Create a separate property for this site rather than
-# reusing minverter.org's — mixing them pollutes both. Uncomment and set the
-# measurement ID; _layouts/base.html emits the gtag snippet when it is set.
-# google_analytics: G-XXXXXXXXXX
+# Google Analytics (GA4). Its own property, separate from minverter.org's, so
+# the two sites' numbers don't pollute each other. _layouts/base.html emits the
+# gtag snippet when this is set.
+google_analytics: G-HPD0ZGBYRB
 
 # index.html renders the latest post in full and lists earlier ones by title, so
 # excerpts are unused. The <!--more--> separator was actively wrong here: Frank's
