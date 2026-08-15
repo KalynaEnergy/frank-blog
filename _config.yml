@@ -17,5 +17,13 @@ excerpt_separator: <!--more-->
 remote_theme: jekyll/minima
 include: ["_includes"]
 
+# Repo scaffolding, not site content. Without this Jekyll renders README.md as
+# the front page when no index exists, and publishes the promotion script.
+exclude:
+  - README.md
+  - bin/
+  - Gemfile
+  - Gemfile.lock
+
 header_pages:
   - about.md
