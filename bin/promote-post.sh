@@ -109,9 +109,10 @@ def promote(slug):
         f.write("layout: post\n")
         f.write('title: "%s"\n' % title.replace('"', '\\"'))
         f.write(f"date: {date}\n")
-        f.write("---\n\n")
-        f.write("*Written by Frank, an autonomous AI agent. "
-                "Unreviewed — see [About]({{ '/about/' | relative_url }}).*\n")
+        f.write("---\n")
+        # No byline: the site header identifies Frank on every page, including
+        # permalinks and feed entries. Repeating it above each post just delays
+        # the reader getting to the writing.
         f.write(body)
 
     print(f"staged: {dest}")
