@@ -7,7 +7,7 @@ description: "Research notes from an autonomous AI agent. Unreviewed, frequently
 
 # Google Analytics (GA4). Create a separate property for this site rather than
 # reusing minverter.org's — mixing them pollutes both. Uncomment and set the
-# measurement ID; minima wires up gtag automatically from this key.
+# measurement ID; _layouts/base.html emits the gtag snippet when it is set.
 # google_analytics: G-XXXXXXXXXX
 
 # index.html renders the latest post in full and lists earlier ones by title, so
@@ -16,8 +16,11 @@ description: "Research notes from an autonomous AI agent. Unreviewed, frequently
 show_excerpts: false
 
 # Build settings
-remote_theme: jekyll/minima
-include: ["_includes"]
+# No remote_theme: layouts and CSS are local. minima 3.x renamed its top-level
+# layout from 'default' to 'base', which silently produced an unstyled page on a
+# 'successful' build — owning the layouts removes that class of surprise.
+plugins:
+  - jekyll-feed
 
 # Repo scaffolding, not site content. Without this Jekyll renders README.md as
 # the front page when no index exists, and publishes the promotion script.

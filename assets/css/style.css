@@ -1,0 +1,143 @@
+/* Palette lifted from the fishtank dashboard so the two feel like one system,
+   adapted for long-form reading: wider line-height, measured column, and a
+   figure treatment for matplotlib PNGs (which arrive with white backgrounds
+   and would otherwise glare against the dark page). */
+
+:root {
+  --bg:        #0f0f14;
+  --card:      #16141f;
+  --border:    #2e2a42;
+  --text:      #d0cfe8;
+  --heading:   #b39ddb;
+  --muted:     #7c6fa0;
+  --dim:       #5a5272;
+  --accent:    #7c4dff;
+  --accent-hi: #ff6d00;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  line-height: 1.65;
+  font-size: 1.02rem;
+  padding: 2rem 1rem 4rem;
+}
+
+.wrap, .site-header, .site-footer { max-width: 46rem; margin: 0 auto; }
+
+/* ---- header ---- */
+.site-header { margin-bottom: 2.5rem; }
+.site-title {
+  font-size: 1.8rem; font-weight: 700; color: var(--heading);
+  text-decoration: none; display: inline-block;
+}
+.site-tagline { color: var(--dim); font-size: 0.9rem; margin-top: 0.2rem; }
+.site-nav { margin-top: 1rem; display: flex; gap: 1.2rem; font-size: 0.85rem; }
+.site-nav a {
+  color: var(--muted); text-decoration: none;
+  text-transform: uppercase; letter-spacing: 0.08em;
+}
+.site-nav a:hover { color: var(--heading); }
+
+/* ---- posts ---- */
+.post { margin-bottom: 3rem; }
+.post-title { font-size: 1.6rem; color: var(--heading); line-height: 1.25; margin-bottom: 0.3rem; }
+.post-meta { color: var(--dim); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 1.8rem; }
+
+.post-content h2 {
+  font-size: 1.05rem; color: var(--muted); margin: 2.4rem 0 0.9rem;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  border-bottom: 1px solid var(--border); padding-bottom: 0.4rem;
+}
+.post-content h3 { font-size: 1rem; color: var(--heading); margin: 1.8rem 0 0.6rem; }
+.post-content p, .post-content ul, .post-content ol { margin-bottom: 1.1rem; }
+.post-content ul, .post-content ol { padding-left: 1.4rem; }
+.post-content li { margin-bottom: 0.35rem; }
+.post-content strong { color: var(--heading); }
+.post-content hr { border: 0; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+
+a { color: var(--heading); }
+a:hover { color: var(--accent-hi); }
+
+blockquote {
+  border-left: 3px solid var(--accent); background: var(--card);
+  padding: 0.8rem 1.1rem; margin: 0 0 1.1rem; border-radius: 0 6px 6px 0;
+  color: var(--muted);
+}
+blockquote p:last-child { margin-bottom: 0; }
+
+/* ---- code ---- */
+code {
+  background: var(--card); border: 1px solid var(--border); border-radius: 4px;
+  padding: 0.1rem 0.35rem; font-size: 0.88em;
+  font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
+}
+pre {
+  background: var(--card); border: 1px solid var(--border); border-radius: 8px;
+  padding: 1rem; overflow-x: auto; margin-bottom: 1.1rem;
+}
+pre code { background: none; border: 0; padding: 0; font-size: 0.85rem; }
+
+/* ---- tables: he writes a lot of these ---- */
+.post-content table {
+  width: 100%; border-collapse: collapse; margin-bottom: 1.4rem;
+  font-size: 0.9rem; display: block; overflow-x: auto;
+}
+.post-content th, .post-content td {
+  border: 1px solid var(--border); padding: 0.5rem 0.7rem; text-align: left;
+}
+.post-content th {
+  background: var(--card); color: var(--muted);
+  text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em;
+}
+.post-content tbody tr:nth-child(even) { background: #131120; }
+
+/* ---- figures ----
+   matplotlib writes white-background PNGs. Sitting raw on a #0f0f14 page they
+   read as glaring rectangles, so give them a light mat and a border: it looks
+   deliberate, like a plate in a paper, instead of an accident. */
+.post-content img {
+  display: block; max-width: 100%; height: auto;
+  margin: 1.6rem auto; background: #fff;
+  border: 1px solid var(--border); border-radius: 8px;
+  padding: 0.6rem;
+}
+.post-content figure { margin: 1.6rem 0; }
+.post-content figcaption {
+  color: var(--dim); font-size: 0.82rem; text-align: center; margin-top: 0.5rem;
+}
+
+/* ---- post list ---- */
+.post-list-heading {
+  font-size: 1rem; color: var(--muted); text-transform: uppercase;
+  letter-spacing: 0.08em; margin: 3rem 0 1rem;
+  border-bottom: 1px solid var(--border); padding-bottom: 0.4rem;
+}
+.post-list { list-style: none; padding: 0; }
+.post-list li {
+  background: var(--card); border: 1px solid var(--border);
+  border-left: 3px solid var(--accent); border-radius: 6px;
+  padding: 0.8rem 1rem; margin-bottom: 0.7rem;
+}
+.post-list .post-meta { margin: 0 0 0.2rem; font-size: 0.72rem; }
+.post-list h3 { font-size: 1rem; margin: 0; }
+.post-list a { text-decoration: none; }
+.post-list a:hover { text-decoration: underline; }
+
+.intro { color: var(--muted); margin-bottom: 2.5rem; font-size: 0.95rem; }
+.backlink { font-size: 0.85rem; margin-top: 2rem; }
+
+/* ---- footer ---- */
+.site-footer {
+  margin-top: 4rem; padding-top: 1.2rem; border-top: 1px solid var(--border);
+  color: var(--dim); font-size: 0.8rem;
+}
+
+@media (max-width: 600px) {
+  body { padding: 1.2rem 0.8rem 3rem; font-size: 0.98rem; }
+  .site-title { font-size: 1.5rem; }
+  .post-title { font-size: 1.35rem; }
+}
