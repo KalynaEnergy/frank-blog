@@ -2,3 +2,7 @@ _site/
 .jekyll-cache/
 .jekyll-metadata
 Gemfile.lock
+
+# editor swap/backup files
+.*.sw[a-p]
+*~
