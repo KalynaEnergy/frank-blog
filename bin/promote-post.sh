@@ -26,7 +26,12 @@ BLOG_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 POSTS = os.path.join(BLOG_ROOT, "_posts")
 
 # ![alt](path "title")  and  <img src="path">
-MD_IMG = re.compile(r'(!\[[^\]]*\]\()([^)\s]+)((?:\s+"[^"]*")?\))')
+#
+# The gap between ] and ( is captured rather than required to be empty: Frank
+# writes "![alt] (path)" most of the time, which is not valid markdown and would
+# publish as literal text. Tolerate it, normalise it, and say so. Alt text may
+# also span lines, hence re.S.
+MD_IMG = re.compile(r'(!\[)([^\]]*)(\])(\s*)\(([^)\s]+)((?:\s+"[^"]*")?\))', re.S)
 HTML_IMG = re.compile(r'(<img[^>]*\bsrc=["\'])([^"\']+)(["\'])')
 
 DATED = re.compile(r"^\d{4}-\d{2}-\d{2}-")
@@ -45,7 +50,19 @@ def list_drafts():
         if not fn.endswith(".md") or fn == "README.md":
             continue
         slug = fn[:-3]
-        state = "published" if os.path.exists(os.path.join(POSTS, fn)) else "draft"
+        live = os.path.join(POSTS, fn)
+        if not os.path.exists(live):
+            state = "draft"
+        else:
+            # Existence alone says nothing: Frank revises published posts, and a
+            # stale live copy looked identical to an up-to-date one. Compare the
+            # rendered output against what is actually published.
+            try:
+                fresh, _, _, _, _ = render(slug, copy_assets=False)
+                same = fresh == open(live, encoding="utf-8").read()
+            except SystemExit:
+                same = True          # unrenderable; not a staleness question
+            state = "published" if same else "UPDATED - needs re-promote"
         print(f"  {slug:<46} {state}")
 
 
@@ -60,8 +77,10 @@ def resolve_asset(ref, draft_dir):
     return None
 
 
-def promote(slug):
-    slug = slug[:-3] if slug.endswith(".md") else slug
+def render(slug, copy_assets=True):
+    """Produce the exact text that belongs in _posts/. With copy_assets=False it
+    has no side effects, so --list can compare it against what is published and
+    tell whether the live post is stale."""
     src = os.path.join(DRAFTS, slug + ".md")
     if not os.path.isfile(src):
         die(f"no such draft: {src}")
@@ -84,42 +103,74 @@ def promote(slug):
     asset_dir = os.path.join(BLOG_ROOT, "assets", "posts", slug)
     copied, missing = [], []
 
-    def rewrite(match):
-        pre, ref, post = match.group(1), match.group(2), match.group(3)
+    fixed_syntax = []
+
+    def _asset(ref):
+        """Resolve and (optionally) copy. Returns the rewritten path or None."""
         if re.match(r"^(https?:)?//|^/|^\{\{", ref):
-            return match.group(0)  # remote or already absolute
+            return None                      # remote or already absolute
         found = resolve_asset(ref, DRAFTS)
         if not found:
             missing.append(ref)
-            return match.group(0)
-        os.makedirs(asset_dir, exist_ok=True)
+            return None
         name = os.path.basename(found)
-        shutil.copy2(found, os.path.join(asset_dir, name))
+        if copy_assets:
+            os.makedirs(asset_dir, exist_ok=True)
+            shutil.copy2(found, os.path.join(asset_dir, name))
         copied.append(name)
-        new = "{{ '/assets/posts/%s/%s' | relative_url }}" % (slug, name)
-        return f"{pre}{new}{post}"
+        return "{{ '/assets/posts/%s/%s' | relative_url }}" % (slug, name)
 
-    body = MD_IMG.sub(rewrite, body)
-    body = HTML_IMG.sub(rewrite, body)
+    def rewrite_md(m):
+        bang, alt, close, gap, ref, tail = m.groups()
+        if gap.strip() != "" or "\n" in gap:
+            pass                              # handled below by normalising gap
+        if gap != "":
+            fixed_syntax.append(ref)
+        alt = " ".join(alt.split())           # collapse multi-line alt text
+        new = _asset(ref)
+        if new is None:
+            return f"{bang}{alt}{close}({ref}{tail}"
+        return f"{bang}{alt}{close}({new}{tail}"
 
-    os.makedirs(POSTS, exist_ok=True)
-    dest = os.path.join(POSTS, slug + ".md")
-    with open(dest, "w", encoding="utf-8") as f:
-        f.write("---\n")
-        f.write("layout: post\n")
-        f.write('title: "%s"\n' % title.replace('"', '\\"'))
-        f.write(f"date: {date}\n")
-        f.write("---\n")
+    def rewrite_html(m):
+        pre, ref, post = m.groups()
+        new = _asset(ref)
+        return m.group(0) if new is None else f"{pre}{new}{post}"
+
+    body = MD_IMG.sub(rewrite_md, body)
+    body = HTML_IMG.sub(rewrite_html, body)
+
+    out = (
+        "---\n"
+        "layout: post\n"
+        + 'title: "%s"\n' % title.replace('"', '\\"')
+        + f"date: {date}\n"
+        "---\n"
         # No byline: the site header identifies Frank on every page, including
         # permalinks and feed entries. Repeating it above each post just delays
         # the reader getting to the writing.
-        f.write(body)
+        + body
+    )
+    return out, title, copied, missing, fixed_syntax
+
+
+def promote(slug):
+    slug = slug[:-3] if slug.endswith(".md") else slug
+    out, title, copied, missing, fixed_syntax = render(slug, copy_assets=True)
+    os.makedirs(POSTS, exist_ok=True)
+    dest = os.path.join(POSTS, slug + ".md")
+    open(dest, "w", encoding="utf-8").write(out)
 
     print(f"staged: {dest}")
     if copied:
         print(f"figures: {len(copied)} copied to assets/posts/{slug}/")
         for c in copied:
             print(f"  + {c}")
+    if fixed_syntax:
+        print(f"normalised {len(fixed_syntax)} malformed image ref(s) — "
+              "'![alt] (path)' is not valid markdown, should be '![alt](path)':")
+        for r in fixed_syntax:
+            print(f"  ~ {r}")
     if missing:
         print("WARNING: referenced images not found on disk (left as-is):")
         for mref in missing:

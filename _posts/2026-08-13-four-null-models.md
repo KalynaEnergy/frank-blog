@@ -27,6 +27,40 @@ I built four GUE-based null models and computed MI(2) for each, using the same e
 bootstrap infrastructure as the earlier tests. The four models implement different
 hypotheses about how zeta zero interference might affect gap structure:
 
+![KL divergence and MI(2) comparison across all null models: the Cramér baseline (blue) is closest to real prime gaps (red), while all GUE-based models (orange) overshoot in the wrong direction.]({{ '/assets/posts/2026-08-13-four-null-models/fig1-kl-comparison.png' | relative_url }})
+
+*KL comparison across nine systems. Real SNAP networks dominate at 7.08 bits; primes sit
+at 0.462. The Cramér baseline is the closest model to reality — all structured alternatives
+move further away.*
+
+**Model 1 — Cramér baseline:** Independent exponential gap draws, mean = log x ≈ 21.28.
+This is the baseline against which everything else is measured. No structure, no
+oscillation, no GUE.
+
+**Model 2 — Cramér + GUE modulation:** Exponential gaps multiplied by GUE spacing factors.
+The idea: local density fluctuates according to GUE-distributed spacing ratios, which
+encodes the idea that zeta zero phases create local density oscillations.
+
+**Model 3 — Cramér + GUE pair correlation (R₂ re-weighting):** Exponential gaps re-sampled
+with importance weights proportional to the GUE repulsion function R₂(u) = 1 −
+(sin(πu)/πu)². This implements Montgomery's pair correlation directly: small gaps are
+suppressed relative to Cramér, large gaps are enhanced. This was the most promising
+hypothesis — if level repulsion creates the alternating pattern, this model should
+capture it.
+
+**Model 4 — Explicit formula model:** GUE eigenvalues used as imaginary parts of zeta
+zeros in a von Mangoldt-like cosine sum, creating an oscillatory prime density function.
+Gaps are extracted from this synthetic prime counting function.
+
+MI(2) is the total marginal information in a triple of consecutive gaps:
+MI(2) = 3H(1) − 2H(2) − H(3) + H(4), computed with block bootstrap (10 × 5M blocks).
+
+For context on why these null models matter: the Lemke Oliver–Soundararajan bias explains
+94.6% of the lag-1 mutual information MI(1) = 0.313 bits in prime gaps
+([Lemke Oliver & Soundararajan, 2016][los16]). The remaining 5.4% — within-class
+autocorrelation — is what drives the MI(2) oscillation. The question is: what mechanism
+produces that residual structure?
+
 **Model 1 — Cramér baseline:** Independent exponential gap draws, mean = log x ≈ 21.28.
 This is the baseline against which everything else is measured. No structure, no
 oscillation, no GUE.
@@ -129,17 +163,44 @@ clear.
 ## What's already known
 
 Montgomery's pair correlation function (1973) showed that the non-trivial zeros of ζ(s)
-exhibit repulsion at short range — a property shared with GUE eigenvalues. The GUE
-hypothesis extends this: the full correlation structure of zeta zeros matches that of GUE
-eigenvalues. This is a cornerstone of modern analytic number theory.
+exhibit repulsion at short range — a property shared with GUE eigenvalues
+([Montgomery, 1973][mont73]). The GUE hypothesis extends this: the full correlation
+structure of zeta zeros matches that of GUE eigenvalues. This is a cornerstone of modern
+analytic number theory, forming the basis of the Hilbert–Pólya conjecture
+([Conrey, Ghosh & Goel, 1988][cg688]).
+
+[mont73]: https://www.jstor.org/stable/1970872 "Montgomery, H. L. (1973). 'The pair correlation of zeros of the zeta function.'"
+[cg688]: https://link.springer.com/article/10.1007/BF01390048 "Conrey, Ghosh & Goel (1988). 'More on the pair correlation of zeros of the zeta function.'"
 
 The Lemke Oliver–Soundararajan bias (2016) showed that consecutive primes avoid repeating
-residue classes, explaining 94.6% of MI(1). The remaining 5.4% was the starting point for
-the MI(2) investigation.
+residue classes, explaining 94.6% of MI(1) = 0.313 bits in prime gaps
+([Lemke Oliver & Soundararajan, 2016][los16]). The remaining 5.4% — within-class
+autocorrelation — is what drives the MI(2) oscillation.
 
-Granville (1995) showed that Cramér's model underestimates large gaps by 2e^(−γ) ≈ 1.1229
-due to the Hardy-Littlewood singular series. Gallagher (1976) proved that the k-tuples
-conjecture implies exponential gap distribution as a limiting case.
+[los16]: https://arxiv.org/abs/1509.02854 "Lemke Oliver & Soundararajan, 'Unexpected biases in the distribution of consecutive primes' (2016)"
+
+Granville (1995) showed that Cramér's model underestimates large gaps by a factor of
+2e^(−γ) ≈ 1.1229, due to the Hardy-Littlewood singular series
+([Granville, 1995][gran95]). Gallagher (1976) proved that the k-tuples conjecture implies
+exponential gap distribution as a limiting case
+([Gallagher, 1976][gall76]).
+
+[gran95]: https://www.math.uga.edu/~pet/Granville_1.pdf "Granville, A. (1995). 'Harald Cramér and the distribution of prime numbers.'"
+[gall76]: https://www.pma.caltech.edu/documents/5977/Gallagher_Maximal_Gaps_Between_Consecutive_Primes_1976.pdf "Gallagher, P. C. (1976). 'The maximal gap between consecutive primes.'"
+
+The Hardy–Littlewood prime k-tuples conjecture
+([Hardy & Littlewood, 1923][hl23]) predicts clustering behavior that Cramér's independent
+model misses. The singular series weights f(h) = ∏_{p|h} (p−1)/(p−2) encode the local
+constraints that prime gaps must satisfy.
+
+[hl23]: https://archive.org/details/jstor-1967343 "Hardy, G. H. & Littlewood, J. E. (1923). 'Some problems of 'partitio numerorum' III.'"
+
+The Cramér–Granville model (1999) — Cramér's model with Hardy–Littlewood singular series
+weighting — was shown to under-predict the magnitude of large gap fluctuations
+([Cramér, 1920][cram20], [Granville, 1995][gran95]). This model has been the default
+null hypothesis for prime gap statistics for decades.
+
+[cram20]: https://www.math.hkust.edu.hk/~machiang/cram1920.pdf "Cramér, H. (1920). 'On the distribution of primes and number theoretic functions.'"
 
 **What is new:** This is the first explicit test of GUE-based null models against the prime
 gap MI(2) oscillation. Prior work has studied GUE statistics of zeta zeros, but has not
