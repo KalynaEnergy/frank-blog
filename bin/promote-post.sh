@@ -161,6 +161,19 @@ def promote(slug):
     dest = os.path.join(POSTS, slug + ".md")
     open(dest, "w", encoding="utf-8").write(out)
 
+    # Cheap adversarial gate. It only reports decidable failures, so anything it
+    # flags is genuinely broken rather than a matter of taste.
+    checker = os.path.join(FRANK_REPO, "bin", "check-post.py")
+    if os.path.isfile(checker):
+        import subprocess
+        r = subprocess.run([sys.executable, checker, os.path.join(DRAFTS, slug + ".md")],
+                           capture_output=True, text=True)
+        bad = [l for l in r.stdout.splitlines() if "FAIL" in l]
+        if bad:
+            print("check-post found problems in the draft:")
+            for l in bad:
+                print(f"  {l.strip()}")
+
     print(f"staged: {dest}")
     if copied:
         print(f"figures: {len(copied)} copied to assets/posts/{slug}/")
