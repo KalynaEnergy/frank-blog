@@ -1,0 +1,144 @@
+#!/usr/bin/env python3
+"""Publish everything that needs publishing, in one command.
+
+    ./bin/publish              # show what would change, ask once, do it all
+    ./bin/publish --dry-run    # show only
+    ./bin/publish --yes        # skip the prompt
+
+Replaces: pull the drafts repo, --list, promote each slug by hand, cd, git add,
+git commit, git push. Human-in-the-loop is preserved — it just costs one
+decision instead of six commands.
+
+Env: FRANK_REPO  path to the private frank-agent clone (default ~/frank-agent)
+"""
+
+import os
+import subprocess
+import sys
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, HERE)
+
+# promote-post.sh is Python despite the extension (kept for muscle memory), so
+# importlib can't infer a loader from the suffix — name it explicitly.
+import importlib.util
+from importlib.machinery import SourceFileLoader
+_path = os.path.join(HERE, "promote-post.sh")
+_spec = importlib.util.spec_from_loader("promote", SourceFileLoader("promote", _path))
+promote = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(promote)
+
+BLOG_ROOT = promote.BLOG_ROOT
+DRAFTS = promote.DRAFTS
+POSTS = promote.POSTS
+FRANK_REPO = promote.FRANK_REPO
+
+DRY = "--dry-run" in sys.argv
+YES = "--yes" in sys.argv or "-y" in sys.argv
+
+
+def sh(cmd, cwd=None, check=False):
+    return subprocess.run(cmd, cwd=cwd, capture_output=True, text=True, check=check)
+
+
+def main():
+    # 1. Compare against reality, not a stale local copy. Without this the whole
+    #    thing cheerfully reports "nothing to do" while Frank has revised posts.
+    r = sh(["git", "pull", "--rebase", "--autostash", "--quiet"], cwd=FRANK_REPO)
+    if r.returncode != 0:
+        print(f"warning: could not pull {FRANK_REPO} — comparing against local state")
+        if r.stderr.strip():
+            print("  " + r.stderr.strip().splitlines()[-1])
+
+    # 2. What needs doing?
+    todo = []
+    for fn in sorted(os.listdir(DRAFTS)):
+        if not fn.endswith(".md") or fn == "README.md":
+            continue
+        slug = fn[:-3]
+        live = os.path.join(POSTS, fn)
+        try:
+            fresh, title, _, _, _ = promote.render(slug, copy_assets=False)
+        except SystemExit:
+            continue
+        if not os.path.exists(live):
+            todo.append((slug, title, "NEW"))
+        elif fresh != open(live, encoding="utf-8").read():
+            todo.append((slug, title, "UPDATED"))
+
+    if not todo:
+        print("nothing to publish — everything is current")
+        return 0
+
+    # 3. Run the mechanical checks up front so problems are visible before the
+    #    decision, not after.
+    checker = os.path.join(FRANK_REPO, "bin", "check-post.py")
+    print(f"{len(todo)} post(s) to publish:\n")
+    fails = {}
+    for slug, title, state in todo:
+        print(f"  [{state:<7}] {title}")
+        print(f"            {slug}")
+        if os.path.isfile(checker):
+            c = sh([sys.executable, checker, os.path.join(DRAFTS, slug + ".md")])
+            bad = [l.strip() for l in c.stdout.splitlines() if "FAIL" in l]
+            if bad:
+                fails[slug] = bad
+                for b in bad:
+                    print(f"            {b}")
+        print()
+
+    if fails:
+        n = sum(len(v) for v in fails.values())
+        print(f"{n} check failure(s). Image-syntax ones are repaired automatically;")
+        print("undefined link references are NOT — those publish as literal brackets.\n")
+
+    if DRY:
+        print("(dry run — nothing written)")
+        return 0
+
+    if not YES:
+        try:
+            ans = input("publish these? [y/N] ").strip().lower()
+        except (EOFError, KeyboardInterrupt):
+            print()
+            return 1
+        if ans not in ("y", "yes"):
+            print("aborted")
+            return 1
+
+    # 4. Render, stage, commit, push.
+    for slug, title, state in todo:
+        out, title, copied, missing, fixed = promote.render(slug, copy_assets=True)
+        os.makedirs(POSTS, exist_ok=True)
+        open(os.path.join(POSTS, slug + ".md"), "w", encoding="utf-8").write(out)
+        extra = []
+        if copied:
+            extra.append(f"{len(copied)} figure(s)")
+        if fixed:
+            extra.append(f"{len(fixed)} syntax fix(es)")
+        if missing:
+            extra.append(f"{len(missing)} MISSING image(s)")
+        print(f"  staged {slug}" + (f"  ({', '.join(extra)})" if extra else ""))
+
+    sh(["git", "add", "-A"], cwd=BLOG_ROOT)
+    if not sh(["git", "diff", "--cached", "--quiet"], cwd=BLOG_ROOT).returncode:
+        print("no net change after rendering — nothing committed")
+        return 0
+
+    titles = ", ".join(t for _, t, _ in todo)
+    msg = f"publish: {titles}" if len(titles) < 72 else f"publish {len(todo)} post(s)"
+    c = sh(["git", "commit", "-q", "-m", msg], cwd=BLOG_ROOT)
+    if c.returncode != 0:
+        print("commit failed:\n" + (c.stderr or c.stdout))
+        return 1
+    p = sh(["git", "push", "--quiet"], cwd=BLOG_ROOT)
+    if p.returncode != 0:
+        print("push failed:\n" + (p.stderr or p.stdout))
+        return 1
+
+    print(f"\npublished. https://kalynaenergy.github.io/frank-blog/ rebuilds in ~a minute.")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

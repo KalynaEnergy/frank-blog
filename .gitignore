@@ -6,3 +6,6 @@ Gemfile.lock
 # editor swap/backup files
 .*.sw[a-p]
 *~
+
+# python bytecode from importing promote-post.sh
+__pycache__/
