@@ -167,17 +167,19 @@ exhibit repulsion at short range — a property shared with GUE eigenvalues
 ([Montgomery, 1973][mont73]). The GUE hypothesis extends this: the full correlation
 structure of zeta zeros matches that of GUE eigenvalues. This is a cornerstone of modern
 analytic number theory, forming the basis of the Hilbert–Pólya conjecture
-([Conrey, Ghosh & Goel, 1988][cg688]).
+([Conrey, Ghosh & Gonek, 1988][cg688]).
 
-[mont73]: https://www.jstor.org/stable/1970872 "Montgomery, H. L. (1973). 'The pair correlation of zeros of the zeta function.'"
-[cg688]: https://link.springer.com/article/10.1007/BF01390048 "Conrey, Ghosh & Goel (1988). 'More on the pair correlation of zeros of the zeta function.'"
+[mont73]: https://en.wikipedia.org/wiki/Montgomery%27s_pair_correlation_conjecture "Montgomery, H. L. (1973). 'The pair correlation of zeros of the zeta function.' — See Wikipedia's entry on Montgomery's pair correlation conjecture."
+[cg688]: https://doi.org/10.1007/978-1-4612-4816-3 "Conrey, Ghosh & Gonek (1988). 'Pair correlation of zeros of the zeta function.' In: Analytic Number Theory and Diophantine Problems. Birkhäuser."
+
+[los16]: https://arxiv.org/abs/1603.03720 "Lemke Oliver & Soundararajan, 'Unexpected biases in the distribution of consecutive primes' (2016)"
 
 The Lemke Oliver–Soundararajan bias (2016) showed that consecutive primes avoid repeating
 residue classes, explaining 94.6% of MI(1) = 0.313 bits in prime gaps
 ([Lemke Oliver & Soundararajan, 2016][los16]). The remaining 5.4% — within-class
 autocorrelation — is what drives the MI(2) oscillation.
 
-[los16]: https://arxiv.org/abs/1509.02854 "Lemke Oliver & Soundararajan, 'Unexpected biases in the distribution of consecutive primes' (2016)"
+
 
 Granville (1995) showed that Cramér's model underestimates large gaps by a factor of
 2e^(−γ) ≈ 1.1229, due to the Hardy-Littlewood singular series
@@ -185,22 +187,22 @@ Granville (1995) showed that Cramér's model underestimates large gaps by a fact
 exponential gap distribution as a limiting case
 ([Gallagher, 1976][gall76]).
 
-[gran95]: https://www.math.uga.edu/~pet/Granville_1.pdf "Granville, A. (1995). 'Harald Cramér and the distribution of prime numbers.'"
-[gall76]: https://www.pma.caltech.edu/documents/5977/Gallagher_Maximal_Gaps_Between_Consecutive_Primes_1976.pdf "Gallagher, P. C. (1976). 'The maximal gap between consecutive primes.'"
+[gran95]: https://web.archive.org/web/20150923212842/http://www.dartmouth.edu/~chance/chance_news/for_chance_news/Riemann/cramer.pdf "Granville, A. (1995). 'Harald Cramér and the distribution of prime numbers.' Scandinavian Actuarial Journal 1: 12–28. — Archived copy."
+[gall76]: https://doi.org/10.1112/S0025579300016442 "Gallagher, P. C. (1976). 'On the distribution of primes in short intervals.' Mathematika 23: 4–9."
 
 The Hardy–Littlewood prime k-tuples conjecture
 ([Hardy & Littlewood, 1923][hl23]) predicts clustering behavior that Cramér's independent
 model misses. The singular series weights f(h) = ∏_{p|h} (p−1)/(p−2) encode the local
 constraints that prime gaps must satisfy.
 
-[hl23]: https://archive.org/details/jstor-1967343 "Hardy, G. H. & Littlewood, J. E. (1923). 'Some problems of 'partitio numerorum' III.'"
+[hl23]: https://doi.org/10.1007/BF02403921 "Hardy, G. H. & Littlewood, J. E. (1923). 'Some problems of 'partitio numerorum' III: On the expression of a number as a sum of primes.' Acta Mathematica 44: 1–70."
 
 The Cramér–Granville model (1999) — Cramér's model with Hardy–Littlewood singular series
 weighting — was shown to under-predict the magnitude of large gap fluctuations
 ([Cramér, 1920][cram20], [Granville, 1995][gran95]). This model has been the default
 null hypothesis for prime gap statistics for decades.
 
-[cram20]: https://www.math.hkust.edu.hk/~machiang/cram1920.pdf "Cramér, H. (1920). 'On the distribution of primes and number theoretic functions.'"
+[cram20]: https://en.wikipedia.org/wiki/Cram%C3%A9r%27s_conjecture "Cramér, H. (1920). 'On the distribution of primes.' Proc. Camb. Phil. Soc. 20: 272–280. — See Wikipedia's entry on Cramér's conjecture for the model and its history."
 
 **What is new:** This is the first explicit test of GUE-based null models against the prime
 gap MI(2) oscillation. Prior work has studied GUE statistics of zeta zeros, but has not

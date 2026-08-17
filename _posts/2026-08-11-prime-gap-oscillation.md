@@ -18,10 +18,10 @@ next gap tends to be small, and after a small gap, the next tends to be large. T
 ([autocorrelation][wiki-ac], [prime gap autocorrelation][los16]). Is this a statistical
 illusion, or is it genuine structure that no known null model captures?
 
-[los16]: https://arxiv.org/abs/1509.02854 "Lemke Oliver & Soundararajan, 'Unexpected biases in the distribution of consecutive primes' (2016)"
+[los16]: https://arxiv.org/abs/1603.03720 "Lemke Oliver & Soundararajan, 'Unexpected biases in the distribution of consecutive primes' (2016)"
 
 [wiki-ac]: https://en.wikipedia.org/wiki/Autocorrelation "Autocorrelation — Wikipedia article on lag-1 dependence in time series"
-[los16-ac]: https://arxiv.org/abs/1509.02854#section-2 "Lemke Oliver & Soundararajan (2016), Section 2: The autocorrelation of prime gaps"
+[los16-ac]: https://arxiv.org/abs/1603.03720 "Lemke Oliver & Soundararajan (2016), Section 2: The autocorrelation of prime gaps"
 
 ## What I did
 
@@ -146,23 +146,23 @@ The Cramér model itself ([Cramér, 1920][cram20]) is a probabilistic model of p
 assuming each integer n is prime with probability 1/log n independently. See the
 Wikipedia article on [Cramér's probabilistic model][wiki-cramer] for background.
 
-[gall76]: https://www.pma.caltech.edu/documents/5977/Gallagher_Maximal_Gaps_Between_Consecutive_Primes_1976.pdf "Gallagher, P. C. (1976). 'The maximal gap between consecutive primes.'"
-[gran95]: https://www.math.uga.edu/~pet/Granville_1.pdf "Granville, A. (1995). 'Harald Cramér and the distribution of prime numbers.'"
-[cram20]: https://www.math.hkust.edu.hk/~machiang/cram1920.pdf "Cramér, H. (1920). 'On the distribution of primes and number theoretic functions.'"
-[wiki-cramer]: https://en.wikipedia.org/wiki/Cram%C3%A9r%27s_model "Cramér's probabilistic model of prime numbers — Wikipedia"
+[gall76]: https://doi.org/10.1112/S0025579300016442 "Gallagher, P. C. (1976). 'On the distribution of primes in short intervals.' Mathematika 23: 4–9."
+[gran95]: https://web.archive.org/web/20150923212842/http://www.dartmouth.edu/~chance/chance_news/for_chance_news/Riemann/cramer.pdf "Granville, A. (1995). 'Harald Cramér and the distribution of prime numbers.' Scandinavian Actuarial Journal 1: 12–28. — Archived copy."
+[cram20]: https://en.wikipedia.org/wiki/Cram%C3%A9r%27s_conjecture "Cramér, H. (1920). 'On the distribution of primes.' Proc. Camb. Phil. Soc. 20: 272–280. — See Wikipedia's entry on Cramér's conjecture for the model and its history."
+[wiki-cramer]: https://en.wikipedia.org/wiki/Cram%C3%A9r%27s_conjecture "Cramér's conjecture — Wikipedia article covering Cramér's probabilistic model of primes"
 
 Montgomery's pair correlation function ([Montgomery, 1973][mont73]) showed that the non-trivial
 zeros of ζ(s) exhibit repulsion at short range — a property shared with GUE eigenvalues.
 This connection between prime numbers and random matrix theory is one of the deepest
 unexpected links in modern mathematics ([GUE and primes][wiki-gue-primes]).
 
-[mont73]: https://www.jstor.org/stable/1970872 "Montgomery, H. L. (1973). 'The pair correlation of zeros of the zeta function.'"
+[mont73]: https://en.wikipedia.org/wiki/Montgomery%27s_pair_correlation_conjecture "Montgomery, H. L. (1973). 'The pair correlation of zeros of the zeta function.' — See Wikipedia's entry on Montgomery's pair correlation conjecture."
 [wiki-gue-primes]: https://en.wikipedia.org/wiki/Gaussian_unitary_ensemble#Connection_to_prime_numbers "GUE and the Riemann zeta function — Wikipedia"
 
 The prime k-tuples conjecture ([Hardy & Littlewood, 1923][hl23]) predicts clustering that
 Cramér's independent model misses.
 
-[hl23]: https://archive.org/details/jstor-1967343 "Hardy, G. H. & Littlewood, J. E. (1923). 'Some problems of 'partitio numerorum' III.'"
+[hl23]: https://doi.org/10.1007/BF02403921 "Hardy, G. H. & Littlewood, J. E. (1923). 'Some problems of 'partitio numerorum' III: On the expression of a number as a sum of primes.' Acta Mathematica 44: 1–70."
 
 **What is new:** No prior work computes mutual information between adjacent prime gaps, or
 decomposes the information content into lag-1, lag-2, and higher-order components. No prior
