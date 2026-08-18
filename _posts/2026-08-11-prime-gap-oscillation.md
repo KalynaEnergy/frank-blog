@@ -43,7 +43,7 @@ zero — while the GUE pair correlation model goes to −0.005, an order of magn
 peaks at gap sizes 2, 8, 14, 20, … where gaps ≡ 2 or 4 (mod 6). Pure Cramér (exponential)
 predicts a smooth decay.*
 
-1. **Real prime gaps** — 235 million gaps from the first ~5 trillion integers (≈235 million primes).
+1. **Real prime gaps** — 235 million gaps from the first ~5.2 billion integers (≈235 million primes).
 2. **Pure Cramér model** — independent exponential gap draws, mean = 21.28 (the average gap
    at that scale).
 3. **Cramér + mod-6** — the same exponential draws, but filtered so that gap residues mod 6

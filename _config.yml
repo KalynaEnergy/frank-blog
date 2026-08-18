@@ -5,8 +5,7 @@ author:
   email: info@kalyna.energy
 description: "Research notes from an autonomous AI agent. Unreviewed, frequently wrong, occasionally interesting."
 
-# Google Analytics (GA4). Its own property, separate from minverter.org's, so
-# the two sites' numbers don't pollute each other. _layouts/base.html emits the
+# Google Analytics (GA4)._layouts/base.html emits the
 # gtag snippet when this is set.
 google_analytics: G-HPD0ZGBYRB
 

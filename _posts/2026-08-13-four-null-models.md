@@ -9,10 +9,12 @@ date: 2026-08-13
 ## The question
 
 Consecutive prime gaps show a persistent alternation: after a large gap, the next tends to
-be small, and vice versa. This manifests as a negative MI(2) of about −0.12 bits (computed
-on the first 235 million gaps from the first 25 billion primes). Three mechanisms had
-already been ruled out as explanations: (1) pure Cramér model, (2) Cramér with mod-6
-residue constraints, and (3) singular series weighting.
+be small, and vice versa. This manifests as a negative MI(2) of about −0.12 bits, computed
+on the first 235 million consecutive gaps between primes up to ~5.2 billion. (235 million
+gaps come from 235 million consecutive prime pairs — if you have N primes in a row, you
+have N − 1 gaps between them.) Three mechanisms had already been ruled out as explanations:
+(1) pure Cramér model, (2) Cramér with mod-6 residue constraints, and (3) singular series
+weighting.
 
 This post tests the fourth and most promising null model: **GUE / Riemann zero interference**.
 If the oscillation is caused by correlations in the Riemann zeta zeros — specifically the
@@ -27,7 +29,7 @@ I built four GUE-based null models and computed MI(2) for each, using the same e
 bootstrap infrastructure as the earlier tests. The four models implement different
 hypotheses about how zeta zero interference might affect gap structure:
 
-![KL divergence and MI(2) comparison across all null models: the Cramér baseline (blue) is closest to real prime gaps (red), while all GUE-based models (orange) overshoot in the wrong direction.]({{ '/assets/posts/2026-08-13-four-null-models/fig1-kl-comparison.png' | relative_url }})
+![KL divergence and MI(2) comparison across all null models: the Cramér baseline (blue) is closest to real prime gaps (red), while all GUE-based models (orange) overshoot in the wrong direction.]({{ '/assets/posts/2026-08-13-four-null-models/kl-comparison.png' | relative_url }})
 
 *KL comparison across nine systems. Real SNAP networks dominate at 7.08 bits; primes sit
 at 0.462. The Cramér baseline is the closest model to reality — all structured alternatives
@@ -60,27 +62,6 @@ For context on why these null models matter: the Lemke Oliver–Soundararajan bi
 ([Lemke Oliver & Soundararajan, 2016][los16]). The remaining 5.4% — within-class
 autocorrelation — is what drives the MI(2) oscillation. The question is: what mechanism
 produces that residual structure?
-
-**Model 1 — Cramér baseline:** Independent exponential gap draws, mean = log x ≈ 21.28.
-This is the baseline against which everything else is measured. No structure, no
-oscillation, no GUE.
-
-**Model 2 — Cramér + GUE modulation:** Exponential gaps multiplied by GUE spacing factors.
-The idea: local density fluctuates according to GUE-distributed spacing ratios, which
-encodes the idea that zeta zero phases create local density oscillations.
-
-**Model 3 — Cramér + GUE pair correlation (R₂ re-weighting):** Exponential gaps re-sampled
-with importance weights proportional to the GUE repulsion function R₂(u) = 1 − (sin(πu)/πu)².
-This implements Montgomery's pair correlation directly: small gaps are suppressed relative
-to Cramér, large gaps are enhanced. This was the most promising hypothesis — if level
-repulsion creates the alternating pattern, this model should capture it.
-
-**Model 4 — Explicit formula model:** GUE eigenvalues used as imaginary parts of zeta
-zeros in a von Mangoldt-like cosine sum, creating an oscillatory prime density function.
-Gaps are extracted from this synthetic prime counting function.
-
-MI(2) is the total marginal information in a triple of consecutive gaps:
-MI(2) = 3H(1) − 2H(2) − H(3) + H(4), computed with block bootstrap (10 × 5M blocks).
 
 ## What I found
 
@@ -227,8 +208,7 @@ no evidence that higher-order correlations are relevant.
 haven't run it yet. If prime density self-regulates with some timescale θ, that would be
 a concrete physical interpretation. Running it is the next step.
 
-**Scale dependence.** All results are from the first 50M gaps (first ~25 billion primes,
-covering the first ~580 billion). If the oscillation weakens at larger scales, that would
+**Scale dependence.** All results are from the first 50M gaps (first ~1 billion integers, ≈50 million primes). If the oscillation weakens at larger scales, that would
 change the interpretation significantly.
 
 **This is an empirical result, not a proof.** The oscillation persists across the data I've
