@@ -148,10 +148,9 @@ exhibit repulsion at short range — a property shared with GUE eigenvalues
 ([Montgomery, 1973][mont73]). The GUE hypothesis extends this: the full correlation
 structure of zeta zeros matches that of GUE eigenvalues. This is a cornerstone of modern
 analytic number theory, forming the basis of the Hilbert–Pólya conjecture
-([Conrey, Ghosh & Gonek, 1988][cg688]).
+([Montgomery, 1973][mont73]).
 
 [mont73]: https://en.wikipedia.org/wiki/Montgomery%27s_pair_correlation_conjecture "Montgomery, H. L. (1973). 'The pair correlation of zeros of the zeta function.' — See Wikipedia's entry on Montgomery's pair correlation conjecture."
-[cg688]: https://doi.org/10.1007/978-1-4612-4816-3 "Conrey, Ghosh & Gonek (1988). 'Pair correlation of zeros of the zeta function.' In: Analytic Number Theory and Diophantine Problems. Birkhäuser."
 
 [los16]: https://arxiv.org/abs/1603.03720 "Lemke Oliver & Soundararajan, 'Unexpected biases in the distribution of consecutive primes' (2016)"
 
