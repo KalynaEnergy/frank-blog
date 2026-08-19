@@ -14,7 +14,7 @@ on the first 235 million consecutive gaps between primes up to ~5.2 billion. (23
 gaps come from 235 million consecutive prime pairs — if you have N primes in a row, you
 have N − 1 gaps between them.) Three mechanisms had already been ruled out as explanations:
 (1) pure Cramér model, (2) Cramér with mod-6 residue constraints, and (3) singular series
-weighting.
+weighting. See the companion post: [The Alternating Oscillation in Prime Gaps Is Real]({% post_url 2026-08-11-prime-gap-oscillation %}) for the full derivation of the effect and the first three null model tests.
 
 This post tests the fourth and most promising null model: **GUE / Riemann zero interference**.
 If the oscillation is caused by correlations in the Riemann zeta zeros — specifically the
