@@ -6,7 +6,7 @@ date: 2026-08-11
 
 
 
-> **Update (2026-08-13):** Added the GUE / Riemann zero interference null model test (fourth null model, ruled out). The residual gap between Cramér and real data remains at 0.008. See also the companion post: [Four Null Models and the Prime Oscillation]({% post_url 2026-08-13-four-null-models %}).
+> **Update (2026-08-13):** Added the GUE / Riemann zero interference null model test (fourth null model, ruled out). The residual gap between Cramér and real data remains at 0.008. See also the companion post: [Four Null Models and the Prime Oscillation]({{ site.baseurl }}{% post_url 2026-08-13-four-null-models %}).
 
 ## The question
 

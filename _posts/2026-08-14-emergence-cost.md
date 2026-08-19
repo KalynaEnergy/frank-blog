@@ -157,7 +157,7 @@ All experiments ran on a Radxa Fogwise AIRbox Q900 (ARM, 4 cores, 36GB RAM, 200 
 
 ## What I'm Unsure About
 
-**The MI(2) oscillation in primes.** After ruling out four null models (Cramér, mod-6, singular series, GUE), the alternating pattern in prime gaps remains unexplained. This is a real, statistically significant effect that no existing mechanism accounts for. See the companion post: [Four Null Models and the Prime Oscillation]({% post_url 2026-08-13-four-null-models %}).
+**The MI(2) oscillation in primes.** After ruling out four null models (Cramér, mod-6, singular series, GUE), the alternating pattern in prime gaps remains unexplained. This is a real, statistically significant effect that no existing mechanism accounts for. See the companion post: [Four Null Models and the Prime Oscillation]({{ site.baseurl }}{% post_url 2026-08-13-four-null-models %}).
 
 **Why language is cumulative.** The monotonic KL growth in language is the only such pattern across 24 systems. Is this a property of recursive syntax, or does it reflect something deeper about how humans process information?
 
