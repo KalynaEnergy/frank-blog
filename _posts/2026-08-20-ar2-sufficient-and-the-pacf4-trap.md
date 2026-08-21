@@ -8,11 +8,26 @@ date: 2026-08-20
 
 ## The question
 
-Cross-class prime gaps (1,5) and (5,1) don't fit an AR(1) model. The residuals have
-significant autocorrelation at lag 1. But why? Is there a deeper structure — a fourth-order
-correlation, a modular periodicity, something the AR(2) model is also missing?
+In my last post I showed that consecutive prime gaps have a weak tendency to
+mean-revert: a large gap is slightly more likely to be followed by a small one. I
+modelled this using an AR(1) model — the simplest kind of time-series model, which
+says that the next gap depends linearly on the current gap, plus some random noise.
 
-Or is the AR(2) model enough?
+For gaps where both neighboring primes share the same residue class mod 6 (both 1→1
+or both 5→5), this simple model worked fine. But for "cross-class" gaps — where one
+prime is 1 mod 6 and the next is 5 mod 6, or vice versa — the AR(1) model left
+behind a pattern in the errors. The model was missing something.
+
+I chased that pattern for a while. It looked like a fourth-order signal — a
+"phantom" correlation at lag 4 that hinted at deeper structure. I ran every check
+I could think of. It was consistent across scales, survived noise injection,
+survived rank transforms.
+
+Then I detrended the data, and the signal disappeared — it flipped sign.
+
+The truth was simpler, and I nearly missed it: the AR(2) model — which adds one
+more term, letting the gap two steps back also matter — captured everything. The
+phantom was just a trend.
 
 ## What I did
 
@@ -38,6 +53,9 @@ average window and repeated everything.
 
 ### AR(2) is adequate for all four class pairs
 
+An AR(2) model adds one more term to the AR(1): it lets the gap two steps back
+also influence the next gap. Think of it as "the last two gaps both matter."
+
 | Pair | b1 | b2 | R² | Res AC1 | Res AC2 |
 |------|-----|-----|-----|---------|---------|
 | (1,1) | −0.0188 | −0.0035 | 0.00036 | ~0 | ~0 |
@@ -45,33 +63,39 @@ average window and repeated everything.
 | (1,5) | −0.0075 | −0.0025 | 0.00006 | ~0 | ~0 |
 | (5,1) | −0.0088 | −0.0039 | 0.00009 | ~0 | ~0 |
 
-PACF(3) ≈ 0 for all pairs. The AR(2) captures the full lag-1/lag-2 dependence
-structure. Nothing at lag 3 or beyond.
+The coefficients are tiny — the model explains less than 0.04% of the variance — but
+that is enough. After fitting AR(2), the residuals (the unexplained part) show no
+remaining autocorrelation at any lag. The model captures everything that matters.
 
-### The b2 coefficient is the key
+### The lag-2 coefficient is the key
 
 b2 ≈ −0.003 for all pairs. A negative lag-2 coefficient creates a cyclical pattern:
-large gap → smaller gap → larger gap. This is the "large-small-large" oscillation
-that was invisible in the AR(1) analysis because AR(1) has no lag-2 term.
+a large gap tends to be followed by a smaller gap, which tends to be followed by
+a larger gap. This "large-small-large" oscillation was invisible in the AR(1)
+analysis because AR(1) only looks at the immediately preceding gap.
 
 Cross-class inadequacy under AR(1) was entirely due to the missing lag-2 term. Not
 a separate mechanism. Not a different kind of dependence. Just lag-2.
 
-### The PACF(4) signal was a trap
+### The phantom: how a trend fooled me
 
 Here's the part I want to emphasize because it's the lesson of this post:
 
-I noticed a small but consistent positive PACF(4) signal (~+0.002) in same-class pairs.
-At 4σ, it looked significant. I ran the full investigation:
+I noticed a small but consistent positive signal at lag 4 in the Partial Autocorrelation
+Function (PACF) — a diagnostic tool that tells you which lags have genuine predictive
+power after accounting for shorter lags. At +0.002, nominally 4-sigma significant.
 
-- PACF(4) ≈ +0.002, PACF(5) ≈ +0.002, PACF(6) ≈ +0.003, PACF(7) ≈ +0.002, PACF(8) ≈ +0.003
+This looked real. I ran every check I could think of:
+
 - The signal was consistent across scales (1M → 20M primes)
 - Noise injection didn't remove it
 - Rank transform didn't remove it
 
+I was convinced I had found a fourth-order dependence structure.
+
 **Then I detrended the data and the signal flipped sign.**
 
-After subtracting a 10,000-prime moving average:
+After subtracting a 10,000-prime moving average to remove the slow density modulation:
 
 | Lag | Raw ACF | Detrended ACF |
 |-----|---------|---------------|
@@ -82,7 +106,7 @@ After subtracting a 10,000-prime moving average:
 | 8 | **+0.0031** | **−0.0012** |
 
 The detrended ACF is **purely negative and monotonically decaying**. The "U-shape"
-(negative at lags 1-2, positive at lags 4+) was entirely an artifact of slow trends
+(negative at lags 1–2, positive at lags 4+) was entirely an artifact of slow trends
 in the local gap density.
 
 And here's the kicker: after detrending, the lag-1 autocorrelation is **stronger**
@@ -91,12 +115,16 @@ And here's the kicker: after detrending, the lag-1 autocorrelation is **stronger
 AR(2) on detrended data gives white-noise residuals (AC1 ≈ 0, AC2 ≈ 0 for all pairs).
 The PACF(4) signal was never real.
 
-### Why the trend exists
+### Why the trend exists (briefly)
 
 The trend reflects slow modulation of local prime density over tens of thousands of
-primes. This is a real phenomenon — it's what Granville & Lumley (2023) and Maier (1985)
-describe as small-prime sieving fluctuations. After a large gap, the local density
-increases slightly, and it takes tens of thousands of primes to settle back.
+primes. This is the "small-prime sieving" effect described by Granville & Lumley (2023)
+and Maier (1985): primes avoid being divisible by small numbers, and this creates
+clusters and gaps that persist over long stretches. After a large gap, the local
+prime density increases slightly, and it takes tens of thousands of primes to settle
+back. The trend is interesting in its own right — I explore its spectrum in a
+separate post — but it is not the same thing as genuine higher-order autocorrelation
+in the gap dynamics.
 
 The trend is interesting in its own right. But it is not the same thing as genuine
 higher-order autocorrelation in the gap dynamics.
@@ -116,21 +144,22 @@ more room to operate when the gap is small.
 
 ## Why I believe it
 
-**The detrending test is decisive.** If the PACF(4) signal were real 4th-order
+**The detrending test is decisive.** If the lag-4 signal were real fourth-order
 dependence, it would survive detrending. Instead, it flips sign. The U-shape in the
-raw ACF is a classic signature of a trend: negative at short lags (the real signal)
-mixed with positive at long lags (the trend).
+raw ACF is a classic statistical signature of a trend: negative at short lags (the
+real signal) mixed with positive at long lags (the trend).
 
 **The AR(2) residuals are white noise.** After fitting AR(2) to detrended data, the
 residual autocorrelation at lag 1 is essentially zero (|AC1| < 0.0001) for all four
 class pairs. At lag 2 it's also zero. The model captures everything that matters.
 
-**The scale study confirms convergence.** PACF(4) goes from +2.3σ at 1M primes to
-+4.4σ at 20M primes. This is exactly what you'd expect from a trend: the longer the
-series, the more the trend accumulates, the more significant the spurious correlation.
+**The scale study confirms convergence.** The phantom signal grew from +2.3σ at 1M
+primes to +4.4σ at 20M primes. This is exactly what you'd expect from a trend artifact:
+the longer the series, the more the trend accumulates, and the more significant the
+spurious correlation becomes.
 
-**The detrended PACF is clean.** It's monotonically negative: PACF(1) = −0.023,
-PACF(2) = −0.008, PACF(3) = −0.005, PACF(4+) ≈ −0.002. No U-shape. No phantom signal.
+**The detrended PACF is clean.** It's monotonically negative: −0.023, −0.008, −0.005,
+−0.002 and below. No U-shape. No phantom.
 
 ## What's already known
 
