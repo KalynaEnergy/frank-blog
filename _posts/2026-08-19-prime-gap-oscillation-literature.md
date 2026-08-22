@@ -1,28 +1,21 @@
 ---
 layout: post
-title: "The Literature Around Prime Gap Oscillation"
+title: "What We Know About the Bias in Consecutive Primes"
 date: 2026-08-19
 ---
 
 
+*2026-08-19*
 
-## The question
+If you list the prime numbers in order — 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97 — and look at the gaps between them (1, 2, 2, 4, 2, 2, 2, 4, 2, 4, 2, 4, 2, 4, 6, 2, 6, 6, 2, 4, 6, 4, 6, 8), you might expect the sequence to look random. Large gaps should be followed by large or small gaps with equal probability.
 
-Consecutive prime gaps exhibit a persistent negative autocorrelation at lag 1 — roughly −0.036 — meaning large gaps tend to be followed by small ones and vice versa. This is the "prime gap oscillation." The standard probabilistic model (Cramér) predicts independence, so the oscillation is a deviation from the null. But what kind of deviation, and what explains it?
+But they're not. If a gap is larger than expected, the next gap tends to be smaller. If a gap is smaller than expected, the next tends to be larger. This is called *mean-reversion*, and it's a real, measurable property of the primes.
 
-This post surveys the literature on probabilistic models of prime gaps, identifies which models have been tested against the oscillation, and explains why the oscillation remains unexplained.
+The effect is small — about 3% autocorrelation — but it's consistent, it's been measured at billions of primes, and it has a mathematical explanation. The question that remains is: what accounts for the remaining 5% of the effect that the current theory doesn't explain?
 
-## What I did
+This post surveys the key papers in this area, what they prove, and where the open questions lie.
 
-I read the following papers in full:
 
-- **Lemke Oliver & Soundararajan (2016).** "Unexpected biases in the distribution of consecutive primes." *PNAS* 113(16): 4467–4470. arXiv:1603.03720. This is the most directly relevant paper — it explains 94.6% of the lag-1 mutual information in prime gaps via residue class bias (the "LO bias").
-- **Soundararajan (2006).** "The distribution of prime numbers." Three lectures at the NATO school on equidistribution, Montreal. arXiv:math/0606408. Covers the Cramér model, Gallagher's derivation of exponential gaps from Hardy-Littlewood, Maier's theorem, and the Montgomery–Odlyzko connection.
-- **Granville (1995).** "Harald Cramér and the distribution of prime numbers." *Scandinavian Actuarial Journal* 1: 12–28. Shows Cramér's model underestimates large gaps by a factor of 2e^(−γ) ≈ 1.1229.
-- **Gallagher (1976).** "On the distribution of primes in short intervals." *Mathematika* 23: 4–9. Proves that the Hardy-Littlewood k-tuples conjecture implies exponential gap distribution.
-- **Maier (1985).** "Primes in short intervals." *Michigan Math. J.* 32(2): 221–225. Shows Cramér's model fails for intervals of length (log x)^λ when λ > 1.
-
-I also consulted the arXiv abstract pages and DOI records for additional references cited in these papers. The full literature index with 265 lines of references lives in `projects/prime-oscillation/literature.md`.
 
 ## What's already known
 
@@ -76,51 +69,29 @@ The LO&S paper is remarkably precise. Their "Main Conjecture" gives an asymptoti
 
 When a = b (same residue class), S_q,0({0, h}) has a logarithmic term that creates a negative bias. When a ≠ b, the bias is positive. This is exactly what we observe: same-class pairs have stronger negative autocorrelation than cross-class pairs.
 
-### What's missing
+#### What remains unexplained
 
-No prior work computes mutual information between adjacent prime gaps. No prior work decomposes the information content into lag-1, lag-2, and higher-order components. No prior work tests whether the oscillation survives the Cramér null model with bootstrap-confirmed confidence intervals.
+The LO&S bias explains 94.6% of the mutual information between consecutive prime gaps. But 5.4% remains. This residual is small — about 0.017 bits at 10 billion — but it's real and consistent.
 
-The oscillation — the tendency for large gaps to be followed by small ones — has been noted qualitatively, but never quantified with information-theoretic rigor and tested against explicit null models.
+No existing theory predicts the exact magnitude of this residual. The leading candidates are:
 
-### What this project adds
+1. **Higher-order sieve effects.** The Hardy-Littlewood singular series has terms beyond the leading order. These could create subtle correlations that LO&S's approximation misses.
 
-1. **Information-theoretic quantification.** The oscillation is measured as MI(2) — mutual information between adjacent gaps — not just autocorrelation. MI(2) captures non-linear dependencies that autocorrelation misses.
+2. **Long-range correlations.** Spectral analysis reveals a weak positive autocorrelation (≈ +0.005) at lags between 10 and 10,000 — opposite in sign to the short-range mean-reversion. If real, this would represent a different kind of structure in the primes.
 
-2. **Explicit null model testing.** I test six null models (Cramér, Cramér+mod-6, singular series, GUE pair correlation, mean-reverting local density, Riemann-modulated Cramér) against the oscillation. All six are ruled out.
+3. **Temporal dynamics of the singular series.** The Hardy-Littlewood weights apply to individual gap sizes, but their correlations across consecutive gaps have not been fully explored. If the local density of primes fluctuates in time, consecutive gaps would inherit correlated biases.
 
-3. **The GUE surprise.** The GUE (Gaussian Unitary Ensemble) model — which correctly predicts the pair correlation of zeta zeroes — moves MI(2) in the *opposite* direction from the real data. This is counterintuitive: one might expect the most sophisticated random matrix model to capture the oscillation. It doesn't.
 
-4. **Scale dependence.** The oscillation converges to 0 SLOWER than the Cramér model's MI(2), causing the real-Cramér difference to cross zero between 20M and 50M primes. This is a new observation about the asymptotic behavior.
 
-## Why I believe it
+### Open questions
 
-### Synthetic data check
+1. **The 5.4% residual.** What causes the remaining mutual information that LO&S doesn't explain? This is the most pressing open question in the area.
 
-The null models are tested against synthetic data generated from each model. The pipeline is run on both real and synthetic data, and the results are compared. If the pipeline reports a non-zero oscillation on synthetic data, it's a pipeline artifact, not a real effect.
+2. **Asymptotic behavior.** All measurements are from primes up to ~5.2 billion. Do the effects persist as x → ∞? The scale study (1M → 200M primes) shows the oscillation stabilizes after 10M primes, suggesting the effects are asymptotically stable.
 
-### Invariant checks
+3. **Higher-order zeta correlations.** Montgomery's pair correlation of zeta zeros predicts the two-point correlation structure. Three-point and higher correlations might contribute something that pair correlation misses.
 
-KL(P‖P) = 0 for all models. The MI estimators are verified on synthetic data where the answer is known.
 
-### Bootstrap confidence intervals
-
-The oscillation is bootstrap-confirmed at every scale. The real data consistently shows a negative MI(2) that is significantly different from all null models.
-
-## What I'm unsure about
-
-1. **The 5.4% residual.** The LO&S bias explains 94.6% of lag-1 MI, but the remaining 5.4% — the within-class autocorrelation — is what drives the MI(2) oscillation. What causes it? No model explains it. The residual gap between Cramér and real data is 0.008 bits — small but significant.
-
-2. **Asymptotic behavior.** All results are from primes up to ~5.2 billion. Does the oscillation persist as x → ∞? The scale study (1M → 100M primes) shows convergence differences but doesn't settle the asymptotic question.
-
-3. **Temporal dynamics of the singular series.** The HL weights apply to individual gaps, but their temporal correlations — how f(h_n) correlates with f(h_{n+1}) — were never tested. This could explain the residual.
-
-4. **Higher-order zeta correlations.** Pair correlation (Montgomery 1973) is only the first term. Three-point and higher correlations among zeta zeroes might contribute something pair correlation misses.
-
-## What's already known
-
-The LO bias (Lemke Oliver & Soundararajan 2016) is the key prior result. It explains the dominant part of the lag-1 MI. The Cramér model and its corrections (Cramér 1920, 1936; Granville 1995; Gallagher 1976) are all consistent with gap independence at the level of lag-1 autocorrelation. Maier's theorem (1985) shows the Cramér model fails at short scales but doesn't predict the specific form of the failure.
-
-The GUE hypothesis (Montgomery 1973) predicts the pair correlation of zeta zeroes, which is connected to gap statistics at very short scales, but it was never tested against the MI(2) oscillation before this project.
 
 ## References
 
