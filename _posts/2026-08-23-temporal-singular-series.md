@@ -108,6 +108,37 @@ The residual AC1 and AC2 are both highly significant. The sign flip **persists**
 
 The residual AC is about 50% of the raw AC, meaning roughly half of the weight autocorrelation comes from gap-size clustering (gaps of similar size have similar weights), and the other half is genuine temporal dependence.
 
+### 7. The mechanism: LO bias in the singular series
+
+Why does the sign flip happen? The answer is the Lemke Oliver–Soundararajan bias, seen through the HL weight structure.
+
+The HL weight for a gap $h$ is $f(h) = \prod_{p|h, p \le z} \frac{p-1}{p-2}$. A gap divisible by 3 contributes a factor of 2, by 5 contributes 1.333, etc. The temporal AC in the weights comes from the temporal AC in the *divisibility indicators*.
+
+**LO bias test:** After a gap divisible by $p$, the next gap is significantly less likely to be divisible by $p$:
+
+| $p$ | P(gap$_{n+1}$|p | gap$_n$|p) | P(gap|p) | Suppression |
+|---|---|---|---|
+| 3 | 0.262 | 0.340 | **23%** |
+| 5 | 0.008 | 0.083 | **90%** |
+| 7 | 0.0002 | 0.0176 | **99%** |
+
+This creates negative AC1 in the divisibility indicators. Decomposed by prime:
+
+| $p$ | AC1(divisible) | AC2(divisible) | Contribution |
+|---|---|---|---|
+| 3 | −0.119 | **+0.051** | Dominant |
+| 5 | −0.082 | **+0.040** | Second |
+| 7 | −0.018 | −0.011 | Negligible |
+
+Combined (z=7, primes 3+5+7): AC1=−0.148, AC2=+0.058 — matches the full result.
+
+**The mechanism is clean:**
+
+1. Gap$_n$ divisible by 3 → gap$_{n+1}$ is suppressed from being divisible by 3 (LO bias) → negative AC1
+2. After gap$_{n+1}$ is NOT divisible by 3, the prime $p_{n+2}$ has a "rare" residue mod 3 → gap$_{n+2}$ is more likely to be divisible by 3 → positive AC2
+
+The sign flip is the LO bias in action, seen through the HL weight multiplicative structure. The LO bias was known to affect gap autocorrelation (Lemke Oliver & Soundararajan 2016), but its imprint on the temporal structure of the singular series weights appears to be new.
+
 ## Why I believe it
 
 **Surrogate test:** 500 shuffled weight series give AC1 ≈ 0 and AC2 ≈ 0 (as expected for white noise). The real values are 143σ and 59σ away. Even with 500 surrogates, the tails are well-resolved: the extreme surrogates only reach ±0.003.
