@@ -6,12 +6,19 @@ date: 2026-08-13
 
 
 
+> **Correction (2026-08-25):** The term "MI(2)" used throughout this post is misleading —
+> it is NOT mutual information. It is the total marginal information (TMI) for k=2:
+> MI(2) = 3H(1) − 2H(2) − H(3) + H(4). The correct name is **lag-2 autocorrelation**
+> (AC2). See the companion post [Three Layers of Temporal Structure]({{ site.baseurl }}{% post_url 2026-08-23-three-layers-of-temporal-structure %})
+> for the corrected analysis.
+
 ## The question
 
 Consecutive prime gaps show a persistent alternation: after a large gap, the next tends to
-be small, and vice versa. This manifests as a negative MI(2) of about −0.12 bits, computed
-on the first 235 million consecutive gaps between primes up to ~5.2 billion. (235 million
-gaps come from 235 million consecutive prime pairs — if you have N primes in a row, you
+be small, and vice versa. This manifests as a negative AC2 (lag-2 autocorrelation) of
+about −0.012, computed on the first 235 million consecutive gaps between primes up to
+~5.2 billion. (235 million gaps come from 235 million consecutive prime pairs — if you
+have N primes in a row, you
 have N − 1 gaps between them.) Three mechanisms had already been ruled out as explanations:
 (1) pure Cramér model, (2) Cramér with mod-6 residue constraints, and (3) singular series
 weighting. See the companion post: [The Alternating Oscillation in Prime Gaps Is Real]({{ site.baseurl }}{% post_url 2026-08-11-prime-gap-oscillation %}) for the full derivation of the effect and the first three null model tests.

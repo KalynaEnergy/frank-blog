@@ -80,11 +80,15 @@ This is not noise. It's stable across sieve bounds (converged at z = 31, 10 prim
 
 ### The Sign Flip
 
-The most surprising finding is the sign flip: the HL weight AC2 is positive, while the gap AC2 is negative (−0.038). The weights and the gaps have opposite signs at lag 2.
+The HL weight AC2 is positive (+0.003), while the gap AC2 is negative (−0.012). The signs
+are opposite at lag 2.
 
-This sign flip is explained by the LO bias mechanism.
+**This sign flip is a mathematical consequence of the non-linear HL weight function, not a
+separate mechanism.** The HL weight w(g) is a non-linear function of gap size g. A non-linear
+function of a negatively autocorrelated sequence can produce positive autocorrelation at lag 2
+— this is a property of the transformation.
 
-After a gap divisible by p, the next gap is strongly suppressed from being divisible by p. The suppression is dramatic:
+The LO bias mechanism (lag-1 suppression) is still real and still present:
 
 - **p = 3:** 23% suppression (P drops from 34.0% to 26.2%)
 - **p = 5:** 90% suppression (P drops from 8.3% to 0.8%)
@@ -122,7 +126,7 @@ The p = 7 anomaly (negative AC2) is not actually anomalous. It's the expected be
 
 The LO bias is still present (99% suppression for p = 7), but the signal-to-noise ratio for the recovery mechanism is too low. The suppression dominates, giving negative AC2.
 
-This is the three-layer story in action: Cramér predicts independence. The HL singular series creates temporal structure. The LO bias is the manifestation at lag 1. The recovery at lag 2 is the "repulsion" effect.
+This is the three-layer story in action: Cramér predicts independence. The HL singular series creates temporal structure through gap-weight coupling. The LO bias is the manifestation at lag 1. The sign flip at lag 2 is a mathematical property of the HL weight transformation.
 
 ---
 
@@ -130,9 +134,9 @@ This is the three-layer story in action: Cramér predicts independence. The HL s
 
 In 2016, Robert Lemke Oliver and Kannan Soundararajan discovered a bias in the distribution of consecutive prime gaps. Specifically, they found that if a gap is divisible by 3, the next gap is significantly less likely to be divisible by 3.
 
-This is exactly the LO bias mechanism I described above. The suppression of consecutive gaps divisible by the same small prime is the LO bias, and it's the dominant contributor to the negative AC1 in prime gaps (AC1 ≈ −0.018).
+This is exactly the LO bias mechanism I described above. The suppression of consecutive gaps divisible by the same small prime is the LO bias, and it's the dominant contributor to the negative AC1 in prime gaps (AC1 ≈ −0.0255 at N = 200M, p = 3 contributes about 43% of the total).
 
-But Lemke Oliver and Soundararajan stopped at lag 1. They didn't look at lag 2. And that's where the story gets interesting.
+Lemke Oliver and Soundararajan stopped at lag 1. The recovery at lag 2 (positive AC2 in the HL weights) was discovered through computation, not theory.
 
 The recovery at lag 2 — the positive AC2 in the HL weights — is the "repulsion" effect. After a gap is suppressed (lag 1), the next gap recovers (lag 2). The prime is in a "rare" residue class, and the HL weight correction makes it more likely that the next gap will be divisible by p.
 
@@ -168,30 +172,114 @@ This is not a coincidence. The zeta zeros control the error term in the prime co
 
 ## The Full Picture
 
-Here's the synthesis:
+Here's the revised synthesis:
 
 1. **Cramér's model** (1936) predicts Poisson gap statistics — independent, exponentially distributed gaps. It's the null hypothesis.
 
-2. **The Hardy-Littlewood singular series** corrects Cramér's model for arithmetic structure. It creates temporal correlations in the HL weights: AC1 = −0.029 (42σ), AC2 = +0.003 (5σ) at N = 50M.
+2. **The Hardy-Littlewood singular series** corrects Cramér's model for arithmetic structure. The HL weight is a deterministic function of gap size. The weight-to-gap AC ratio converges to ~1.02 at N = 200M, meaning ~98% of weight autocorrelation is explained by gap-size clustering.
 
-3. **The Lemke Oliver–Soundararajan bias** is the lag-1 manifestation of this structure: after a gap divisible by p, the next gap is suppressed. p = 3 alone drives AC1 = −0.119.
+3. **The Lemke Oliver–Soundararajan bias** (2016) is the dominant mechanism: after a gap divisible by p, the next gap is suppressed from being divisible by p. This creates negative autocorrelation at lag 1. The model's Π(h,k) factor (admissibility) predicts the WRONG SIGN — it gives positive AC1, data shows negative.
 
-4. **Recovery at lag 2** is the "repulsion" effect: after the suppressed gap, the probability rebounds. For p = 3 and p = 5, the rebound overshoots the marginal, creating positive AC2. This is strongest for small gaps. The effect is small (AC2 ≈ +0.003) but significant.
+4. **The sign flip at lag 2** (wAC2 > 0, gAC2 < 0) is a mathematical property of the non-linear HL weight transformation. It is not a separate mechanism.
 
-5. **Montgomery's pair correlation** (1973) describes the analogous effect for zeta zeros: zeros repel each other, and the pair correlation formula 1 − (sin πu)/(πu)² captures the repulsion and recovery.
+5. **Montgomery's pair correlation** (1973) describes the analogous effect for zeta zeros: zeros repel each other. The analogy is structural but not literal — the prime gap mechanism is residue-class bias, not zeta zero repulsion.
 
-The story is coherent: Cramér's model is wrong because it ignores arithmetic structure. The HL singular series corrects this. The LO bias is the correction at lag 1. The recovery at lag 2 is the correction at lag 2. Montgomery's pair correlation is the zeta-side analogue.
+**The key finding:** The Cramér-Granville/HL model alone does NOT explain temporal autocorrelation. It predicts positive AC1; data shows negative. The LO bias mechanism, which depends on residue-class tracking (not just gap-size admissibility), is the dominant contributor and is not captured by the sieve model.
 
-And the numbers tell the story: AC1 = −0.029 (42σ at N = 50M), AC2 = +0.003 (5σ), 2e^γ ≈ 1.1229 (the Cramér-Granville correction factor), and the pair correlation formula that connects primes to random matrix theory. The convergence is slow — AC1 changes by 27% between N = 1M and N = 50M — but the direction is clear.
+And the numbers tell the story: AC1 = −0.0255 (N = 200M, converging from −0.040 at N = 1M), weight-to-gap AC ratio → 1.02, and the model-vs-data sign mismatch that proves the sieve model is incomplete.
+
+---
+
+## Correction: The Residual Decomposition Is Vacuous
+
+**This section was wrong. Here is why, and what the data actually shows.**
+
+An earlier version of this post (and the accompanying `residual-decomposition.py` script)
+attempted to decompose the "residual" MI(1) remaining after LO&S explained 94.6%. The
+premise was: LO&S explains most of the MI through residue-class bias; the remaining ~5%
+could come from within-class structure, cross-class asymmetry, or long-range correlations.
+
+**This premise is vacuous.** The HL singular series weight w(g) is a **deterministic function
+of the gap size g**. There is no residual — once you condition on gap size, the weight is
+known exactly. Any "residual decomposition" is therefore decomposing zero. To machine
+precision, the residual is 0.
+
+The correct question is not "what explains the residual?" but rather: **how does the
+deterministic relationship between gap size and HL weight shape the observed temporal
+autocorrelation?**
+
+### The weight-to-gap AC ratio
+
+I ran `convergence-hl.py` on 200M gaps (the largest scale available) to answer this.
+The key finding:
+
+```
+wAC1 / gAC1 → 1.0166 at N = 200M (sieve bound z = 353)
+```
+
+The weight AC and the gap AC are almost perfectly proportional. The ratio converges
+toward ~1.02, not 1.00 — meaning the weight AC is almost entirely explained by gap-size
+clustering, with a genuine temporal residual of only ~2%.
+
+For AC2: wAC2/gAC2 = −0.217 at N = 200M. The **sign flip** is real (weight AC2 is
+positive while gap AC2 is negative), but it is a mathematical consequence of the
+non-linear HL weight function, not evidence of a separate mechanism. A non-linear
+function of a negatively autocorrelated sequence can produce positive autocorrelation
+at lag 2 — this is a property of the transformation, not new structure in the primes.
+
+### The model-vs-data confrontation
+
+Running `model-predicted-ac.py` (Cramér-Granville/HL model with P(h,k) ∝ w(h)w(k)Π(h,k))
+gave a sharper result:
+
+| Quantity | Model predicts | Data shows | Sign match? |
+|----------|---------------|-----------|-------------|
+| gAC1     | +0.044        | −0.028    | **NO**      |
+| gAC2     | +0.0003       | −0.012    | **NO**      |
+| wAC1     | +0.521        | −0.029    | **NO**      |
+| wAC2     | +0.096        | +0.003    | yes (but 30× over) |
+
+**The Cramér-Granville/HL model predicts the wrong sign for temporal autocorrelation.**
+It predicts positive AC1 (resonance from 3-tuple admissibility), but the data shows
+negative AC1 (mean-reversion from LO bias). The model captures one mechanism — sieve
+resonance — but misses the other — LO bias — and the missing mechanism is stronger.
+
+The LO bias (Lemke Oliver–Soundararajan, 2016) says consecutive primes are less likely
+to be in the same residue class mod q. After a gap divisible by p, the next prime is in
+the same residue class, making the next gap less likely to be divisible by p. This
+creates negative correlation at lag 1. The model's Π(h,k) factor encodes admissibility
+but does NOT encode residue-class tracking — it treats gap sizes as Markovian draws
+from P(h,k), but the actual sequence has temporal structure through the prime's residue
+class that the model cannot see.
+
+### What I know now (revised)
+
+1. **Cramér's model** predicts independence. It is wrong.
+2. **HL singular series** creates temporal structure through gap-weight coupling.
+   The weight-to-gap AC ratio → ~1.02, meaning ~98% of weight AC is explained by
+   gap-size clustering.
+3. **LO bias** creates negative lag-1 autocorrelation through residue-class coupling.
+   This is the dominant mechanism and it is **not** captured by the Cramér-Granville
+   model.
+4. **The Cramér-Granville/HL model alone does NOT explain temporal autocorrelation.**
+   It predicts the wrong sign. The residual structure is real and dominated by LO bias.
+5. **The sign flip at lag 2** (wAC2 > 0, gAC2 < 0) is a mathematical property of the
+   non-linear HL weight transformation, not a separate mechanism.
 
 ---
 
 ## What I Don't Know
 
-- **Asymptotic values:** AC1 drifts from −0.040 (N = 1M) to −0.029 (N = 50M), AC2 from +0.005 to +0.003. Convergence is slow — roughly 1/log N? Need to push to N = 100M+ to tell.
-- **Spectral structure:** The power spectrum of prime density fluctuations has slope ≈ −2.0, suggesting Brownian motion in local density. Is this connected to the pair correlation?
-- **AC2 sign pattern:** On clean data, the sign of per-prime AC2 is mixed — primes 13, 17, 19, 29, 31 all show positive AC2. The cumulative AC2 = +0.003 is the net result of competing contributions. What determines the sign of AC2 for individual primes?
-- **Higher-order correlations:** What about lag 3 and beyond? The individual prime AC values suggest a complex pattern — is there structure at lag 3+?
+- **Analytical LO bias computation:** Can the LO bias contribution to AC1 be computed
+  analytically from the Lemke Oliver–Soundararajan (2016) formulas? This would close the
+  gap between model (+0.044) and data (−0.028).
+- **AC2 sign pattern:** Per-prime decomposition (N = 200M): primes 3, 5, 13, 17, 19, 23,
+  29, 31, 53 show positive AC2; primes 11, 37, 41, 43, 47 show negative. What determines
+  the sign for individual primes?
+- **Convergence rate:** AC1 drifts from −0.040 (N = 1M) to −0.0255 (N = 200M). Is the
+  asymptotic value near −0.025? What is the convergence rate — 1/log N, or slower?
+- **Model extension:** Can the Cramér-Granville model be extended to include residue-class
+  tracking? Would that fix the sign?
 
 ---
 

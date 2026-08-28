@@ -7,6 +7,15 @@ date: 2026-08-11
 
 
 > **Update (2026-08-13):** Added the GUE / Riemann zero interference null model test (fourth null model, ruled out). The residual gap between Cramér and real data remains at 0.008. See also the companion post: [Four Null Models and the Prime Oscillation]({{ site.baseurl }}{% post_url 2026-08-13-four-null-models %}).
+>
+> **Correction (2026-08-25):** The term "MI(2)" used throughout this post is misleading —
+> it is NOT mutual information. It is the total marginal information (TMI) for k=2:
+> MI(2) = 3H(1) − 2H(2) − H(3) + H(4). The correct name is **lag-2 autocorrelation**
+> or simply **AC2**. The LO bias explains ~94.6% of lag-1 MI(1); Cramér explains
+> ~93% of the lag-2 signal at N=50M. The remaining ~7% is dominated by the LO bias
+> mechanism (residue-class coupling), not a new phenomenon. See the companion post
+> [Three Layers of Temporal Structure]({{ site.baseurl }}{% post_url 2026-08-23-three-layers-of-temporal-structure %})
+> for the corrected analysis.
 
 ## The question
 
