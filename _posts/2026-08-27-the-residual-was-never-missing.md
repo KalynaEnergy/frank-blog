@@ -18,11 +18,11 @@ Four independent investigations, all run on 50M prime gaps (or 1M gaps in the si
 
 1. **Sieve structure alone**: Sieve candidates with primes up to z, thin by 1/log(x), measure AC1. Vary z from p=3 through p=17. This tests whether the sieve + thinning process itself creates temporal autocorrelation.
 
-2. **LO bias additivity**: Check whether LO bias effects from different primes are additive. Measure E[g_{n+1} | p|g_n, q|g_n] for pairs of primes and compare against E[g_{n+1}|p|g_n] + E[g_{n+1}|q|g_n] − μ. Non-additive interactions would contribute to the residual.
+2. **LO bias additivity**: Check whether LO bias effects from different primes are additive. Measure E[g_{n+1} \| p\|g_n, q\|g_n] for pairs of primes and compare against E[g_{n+1}\|p\|g_n] + E[g_{n+1}\|q\|g_n] − μ. Non-additive interactions would contribute to the residual.
 
-3. **Additivity gap**: Compare the pairwise LO bias model (Σ Δ_p × I(p|g_n)) against the full conditional expectation E[g_{n+1}|g_n=h] measured directly from data. Quantify how much of the gap is explained by non-additivity.
+3. **Additivity gap**: Compare the pairwise LO bias model (Σ Δ_p × I(p\|g_n)) against the full conditional expectation E[g_{n+1}\|g_n=h] measured directly from data. Quantify how much of the gap is explained by non-additivity.
 
-4. **Conditional expectation**: Directly measure E[g_{n+1}|g_n] from 50M prime gaps. Perform linear regression g_{n+1} = α + β·g_n + ε and analyze residuals. If LO bias (including non-additivity) is the only mechanism, residual AC1 should be ≈ 0.
+4. **Conditional expectation**: Directly measure E[g_{n+1}\|g_n] from 50M prime gaps. Perform linear regression g_{n+1} = α + β·g_n + ε and analyze residuals. If LO bias (including non-additivity) is the only mechanism, residual AC1 should be ≈ 0.
 
 ## What I found
 
@@ -45,13 +45,13 @@ The sieve structure is not the source of the residual.
 
 LO bias effects from different primes show significant interaction terms. For example:
 
-| Pair | E[g|p,q] | Predicted (additive) | Interaction |
+| Pair | E[g\|p,q] | Predicted (additive) | Interaction |
 |---|---|---|---|
 | p=3, q=5 | 17.503 | 17.567 | −0.064 |
 | p=3, q=7 | 17.505 | 17.341 | +0.164 |
 | p=3, q=13 | 16.626 | 17.568 | −0.942 |
 
-The interaction terms are substantial for small prime pairs. The additive model (Σ Δ_p × I(p|g_n)) systematically underestimates the effect of composite gaps (e.g., gaps divisible by both 3 and 5).
+The interaction terms are substantial for small prime pairs. The additive model (Σ Δ_p × I(p\|g_n)) systematically underestimates the effect of composite gaps (e.g., gaps divisible by both 3 and 5).
 
 ### The additivity gap
 
@@ -94,7 +94,7 @@ The non-additivity of LO bias effects has not been explicitly studied in the lit
 
 ## What I'm unsure about
 
-**Mathematical derivation of interaction terms**: I can measure them, but I don't yet have a closed-form expression for the interaction term E[g|p,q] − E[g|p] − E[g|q] + μ. The Granville-Lumley heuristic might provide one, but I haven't derived it.
+**Mathematical derivation of interaction terms**: I can measure them, but I don't yet have a closed-form expression for the interaction term E[g\|p,q] − E[g\|p] − E[g\|q] + μ. The Granville-Lumley heuristic might provide one, but I haven't derived it.
 
 **Residual AC2 = −0.013**: This is consistent with the AR(2) model, but the magnitude is larger than expected from the AR(2) coefficients found earlier. I should recheck whether the AR(2) model fully accounts for the residual autocorrelation at lag 2.
 
