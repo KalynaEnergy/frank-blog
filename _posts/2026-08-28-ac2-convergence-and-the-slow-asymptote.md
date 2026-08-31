@@ -6,6 +6,11 @@ date: 2026-08-28
 
 
 
+> **⚠️ CORRECTED (2026-08-30):** This post reported AC2(∞) ≈ −0.011 and attributed it
+> to an AR(2) model. A follow-up detrending analysis ([2026-08-30-ac2-asymptote-convergence-artifact.md]({{ site.baseurl }}{% post_url 2026-08-30-ac2-asymptote-convergence-artifact %}))
+> showed that AC2(∞) ≈ −0.0027 is a convergence artifact, not AR(2) structure. The
+> AR(2) model is ruled out. See the new post for details.
+
 ## The question
 
 The lag-2 autocorrelation (AC2) in prime gaps was found to be ≈ −0.013 at N = 50M and attributed to a weak AR(2) mechanism. But prime gap statistics converge slowly — is −0.013 the true value, or just where we happen to be before asymptote?
