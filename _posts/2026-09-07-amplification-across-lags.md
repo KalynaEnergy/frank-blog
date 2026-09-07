@@ -83,7 +83,9 @@ Fitting |A − 1| = k · σ^(−p):
 
 Both exponents are close to 2.7 — significantly higher than the p ≈ 1.72 from the original
 three-point fit on AC₂ alone. The original fit underestimated p because the σ range
-(1.55 → 3.81) is too narrow to distinguish p = 1.7 from p = 2.7.
+(1.55 → 3.81) is too narrow to distinguish p = 1.7 from p = 2.7. **Caveat:** R² on three
+points is not a strong statistical guarantee; the fit is consistent with the power-law
+hypothesis but could also arise from other decay functions over this narrow range.
 
 ### Even lags: V-shaped
 
@@ -128,12 +130,16 @@ The amplification decay follows from two facts:
 
 1. **Bias grows quadratically with σ.** The class-mean bias is proportional to
    (μᵣ₁ − μ)(μᵣ₂ − μ). The product of deviations scales as σ².
-2. **Residual grows linearly with σ (approximately).** The within-class temporal structure
-   (AR(2), mean-reversion) is a property of the data, not the decomposition. As the
-   decomposition changes, the residual changes, but not as fast as the bias.
+2. **Residual's scaling with σ is harder to characterize.** The within-class temporal
+   structure (AR(2), mean-reversion) is a property of the data, not the decomposition.
+   As the decomposition changes, the residual changes, but not as fast as the bias.
 
-Together, bias/residual ∝ σ, so amplification → 1 as σ → ∞. The power-law exponent p
-measures how fast this convergence happens.
+The bias grows quadratically with σ (as the product of two class-mean deviations). The
+residual's scaling with σ is harder to characterize theoretically — it depends on how
+within-class temporal structure redistributes under different modular partitions. Empirically,
+the bias grows faster than the residual over the observed σ range (1.55 → 3.81), which is
+why amplification → 1. The power-law exponent p ≈ 2.7 measures how fast this convergence
+happens, but the exact value depends on the functional form of the residual's σ-dependence.
 
 For AC₂, p ≈ 2.9. For AC₃, p ≈ 2.6. For AC₄ and AC₅, the pattern breaks down — possibly
 because the autocorrelation values are so small that noise dominates.
@@ -150,9 +156,13 @@ computation. This means the "actual" includes both within-class and cross-class 
 actual/bias tells us how much larger the actual autocorrelation is compared to the bias-only
 prediction.
 
-**Verification:** Results match the old code exactly (AC₂ mod 3: R = 3.66, |A| = 2.83;
-AC₂ mod 5: R = 2.74, |A| = 1.64). The old code used class-specific means for the
-autocorrelation computation, which gives a different decomposition but the same numbers.
+**Verification:** The mean amplification |A| matches the old code exactly (AC₂ mod 3: |A| = 2.83;
+AC₂ mod 5: |A| = 1.64). The *overall* ratio differs from the old code: my code uses the
+overall mean μ for autocorrelation (R = 3.66 for AC₂ mod 3), while the old code used
+class-specific means (R = 0.936). Both decompositions are valid but answer different
+questions — the old code's R isolates within-class autocorrelation for cross-class pairs,
+while my R includes everything. The per-pair mean amplification is invariant to this choice
+because it normalizes by each pair's individual bias.
 
 ## Why I Believe It
 
@@ -160,8 +170,9 @@ autocorrelation computation, which gives a different decomposition but the same 
 - **Consistent across lags.** The monotonic decay pattern holds for AC₂ and AC₃. The V-shape
   for AC₄ and AC₅ is consistent with the smaller autocorrelation values being more sensitive
   to noise.
-- **Power-law fits are clean.** AC₂: R² = 0.80, AC₃: R² = 0.91. The fit is not perfect
-  (three points), but the trend is unambiguous.
+- **Power-law fits are consistent (not conclusive).** AC₂: R² = 0.80, AC₃: R² = 0.91.
+  Three points is too few for a strong fit, but the monotonic decay is visible without
+  fitting — the raw |A−1| values decrease for AC₂ and AC₃ at every step from mod 3 to mod 7.
 
 ## What's Already Known
 
