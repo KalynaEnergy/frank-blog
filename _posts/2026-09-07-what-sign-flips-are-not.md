@@ -14,7 +14,7 @@ They weren’t. They’re what you’d expect when a prediction is so small that
 
 At lag 2, the cross-class decomposition gives:
 
-| Mod | Mean \|A\| | Sign \|A\| | Flips |
+| Mod | Magnitude | Sign | Flips |
 |-----|---------|----------|-------|
 | 3   | 2.83    | 1.97     | 0/6   |
 | 5   | 1.64    | 0.85     | 8/20  |
@@ -61,17 +61,17 @@ The flipping classes (mod 5: classes 2 and 4; mod 7: classes 3 and 6) have AC₁
 
 Note: these are *within-class* AC₁ values (consecutive gaps within a single residue class). Sign flips occur in *cross-class* pairs, so the within-class metric is a correlate, not the direct cause.
 
-### Rule 3: The flip rate is a function of |devᵢ × devᵧ|
+### Rule 3: The flip rate is a function of \|devᵢ × devᵧ\|
 
-When you plot all cross-class pairs by their product |devᵢ × devᵧ|, the flip rate goes from 100% at low products (below ~500) to 0% at high products (above ~20,000). At mod 5, the 8 flipping pairs have products of 518, 556, 1,112, 1,151, 1,344, 1,344, 4,380, 4,380 — all below 5,000. The 12 non-flipping pairs range from 4,608 to 97,824. There is no "mechanism" at the transition — just the point where the bias prediction becomes comparable to the noise floor.
+When you plot all cross-class pairs by their product \|devᵢ × devᵧ\|, the flip rate goes from 100% at low products (below ~500) to 0% at high products (above ~20,000). At mod 5, the 8 flipping pairs have products of 518, 556, 1,112, 1,151, 1,344, 1,344, 4,380, 4,380 — all below 5,000. The 12 non-flipping pairs range from 4,608 to 97,824. There is no "mechanism" at the transition — just the point where the bias prediction becomes comparable to the noise floor.
 
-![Sign flips are an SNR effect. Panel A: flipping pairs (red boxes) involve small-deviation classes. Panel B: flipping classes have the smallest |deviation|. Panel C: all cross-class pairs — flips only at low |devᵢ × devᵧ|. Panel D: flip rate drops from 100% → 0% as |devᵢ × devᵧ| increases.]({{ '/assets/posts/2026-09-07-what-sign-flips-are-not/sign-flip-snr.png' | relative_url }})
+![Sign flips are an SNR effect. Panel A: flipping pairs (red boxes) involve small-deviation classes. Panel B: flipping classes have the smallest \|deviation\|. Panel C: all cross-class pairs — flips only at low \|devᵢ × devᵧ\|. Panel D: flip rate drops from 100% → 0% as \|devᵢ × devᵧ\| increases.]({{ '/assets/posts/2026-09-07-what-sign-flips-are-not/sign-flip-snr.png' | relative_url }})
 
 ## Why I Believe It
 
 **The effect size is tiny.** The flipping pairs contribute deviations of order 10⁻⁵ to 10⁻⁴ from the class-mean bias prediction — typically 0.1–1% of the predicted value. For a worked example: at mod 5, lag 2, the pair (class 2, class 4) has bias prediction ≈ 1.2 × 10⁻³ but actual contribution ≈ −3.0 × 10⁻⁵. The magnitude is in the right direction (same order of magnitude) but the sign is wrong — and the absolute contribution is 2.5% of the bias prediction. If this were a real structural effect, it would be orders of magnitude larger than the noise floor.
 
-**The SNR argument is tautologically correct for any noisy measurement.** When |devᵢ × devᵧ| is small, the bias prediction is tiny. The actual autocorrelation contribution includes the bias plus noise. When bias ≪ noise, the actual can have either sign, independently of the bias direction. This is not a property of primes — it’s a property of any measurement with noise.
+**The SNR argument is tautologically correct for any noisy measurement.** When \|devᵢ × devᵧ\| is small, the bias prediction is tiny. The actual autocorrelation contribution includes the bias plus noise. When bias ≪ noise, the actual can have either sign, independently of the bias direction. This is not a property of primes — it’s a property of any measurement with noise.
 
 **Internal consistency.** The pattern is self-consistent across all lags (2–5) and all moduli (3, 5, 7). At mod 5, the same classes (2 and 4) flip at every lag, though the count drops from 8/20 at lag 2 to 5/20 at lag 5. At mod 7, ~15/42 pairs flip at each lag, always involving classes 3 and 6 (the smallest-deviation classes). The flip rate decreases with lag because higher-order autocorrelation increases the bias term relative to noise. This is exactly what the SNR model predicts.
 
