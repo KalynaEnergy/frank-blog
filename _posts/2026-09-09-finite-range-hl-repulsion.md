@@ -70,11 +70,47 @@ The prime gap autocorrelation function has three distinct components:
 
 The finite range of HL repulsion is a structural property of prime gaps. It is not a convergence artifact (the values stabilize by N ≈ 100M for lags 2-4 and N ≈ 200M for lags 5-7). It is not a modulus artifact (the pattern holds for moduli 3, 5, 7, and 11).
 
+## HL Weights vs Observed Data
+
+I ran a three-way comparison to test whether HL weights alone explain the finite-range
+pattern:
+
+1. **Uniform HL ratio** (theory, no data): average HL weight for same-sign pairs / average
+   HL weight for different-sign pairs, over all even gap combinations.
+2. **Empirical HL ratio** (HL × actual gap distribution): HL weight for each pair, weighted
+   by its empirical frequency.
+3. **Observed ratio** (data): plain count of same-sign / different-sign consecutive gap pairs.
+
+Results at mod 3:
+
+| Measure | Lag 2 | Lag 3 | Lag 4 |
+|---------|-------|-------|-------|
+| Uniform HL | 1.81 | 1.20 | 0.92 |
+| Empirical HL | 0.39 | 0.28 | 0.23 |
+| Observed | 0.22 | 0.22 | 0.22 |
+
+**What this tells us:**
+
+- Uniform HL shows clear finite-range decay (1.81→0.92). The singular series *does* encode
+  finite-range repulsion.
+- Empirical HL flips the direction: despite HL favoring same-sign at lag 2, the actual gap
+  distribution (dominated by small gaps) makes different-sign pairs far more common. The
+  decay (0.39→0.28→0.23) tracks the AC decay direction.
+- Observed ratio is constant across lags (0.22). This is because we're measuring the same
+  pairwise statistic at each lag — the AC decay comes from the autocorrelation structure,
+  not from the same-sign ratio.
+
+**Conclusion:** HL weights contribute to the finite-range AC decay, but the empirical gap
+distribution is the primary driver. The finite-range pattern is **dual-origin**: HL repulsion
+provides the theoretical mechanism, but the actual gap distribution dominates the observed
+signal.
+
 ## Open Questions
 
 - Does the HL k-tuple conjecture predict the exact range lags 2-3? The singular series weights for k-tuples at spacings 2 and 3 are systematically different from those at spacings 4 and beyond.
 - Why does the transition happen exactly at lag 3→4, rather than being gradual?
 - What is the physical mechanism for the class-mean bias suppression at lags 4-5 (amplification < 1 for moduli 3 and 5)?
+- Can we decompose AC(k) into HL contribution + LO bias contribution + residual quantitatively?
 
 ## Data
 
