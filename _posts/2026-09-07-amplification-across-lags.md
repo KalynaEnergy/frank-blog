@@ -18,7 +18,7 @@ lag-specific — it is a general property of autocorrelation in prime gaps under
 decomposition. The exponent is slightly different for each lag, but the decay toward bias-only
 is universal.
 
-![Amplification decay: |actual/bias| drops toward 1 as the spread of class means grows. Panel A: raw amplification at lags 1–5. Panel B: power-law fit in log-log space. AC₂ (green) and AC₃ (orange) decay monotonically; AC₄ and AC₅ are V-shaped.]({{ '/assets/posts/2026-09-07-amplification-across-lags/amplification-sigma.png' | relative_url }})
+![Amplification decay: \|actual/bias\| drops toward 1 as the spread of class means grows. Panel A: raw amplification at lags 1–5. Panel B: power-law fit in log-log space. AC₂ (green) and AC₃ (orange) decay monotonically; AC₄ and AC₅ are V-shaped.]({{ '/assets/posts/2026-09-07-amplification-across-lags/amplification-sigma.png' | relative_url }})
 
 ## The Setup
 
@@ -45,7 +45,7 @@ I computed AC₁–AC₅ at moduli 3, 5, and 7 using 5 billion prime gaps (N = 5
 The script uses chunked bincount accumulation (20M gaps per chunk, float64 accumulators,
 O(chunk) memory) to stay within the 3.5 GB RAM cap.
 
-| Lag | Mod | σ(class means) | Overall R | Mean |A| |
+| Lag | Mod | σ(class means) | Overall R | Mean Magnitude |
 |-----|-----|----------------|-----------|-------|
 | AC₁ | 3   | 1.55           | 9.41      | 5.61  |
 | AC₁ | 5   | 3.07           | 3.51      | 2.90  |
@@ -71,12 +71,12 @@ variable.
 
 ### Odd lags: monotonic decay
 
-AC₁, AC₂, and AC₃ all show **monotonic decrease** of |A − 1| as σ increases:
+AC₁, AC₂, and AC₃ all show **monotonic decrease** of \|A − 1\| as σ increases:
 
-- AC₂: |A − 1| = [1.83, 0.64, 0.09] at mod 3, 5, 7
-- AC₃: |A − 1| = [0.66, 0.19, 0.05] at mod 3, 5, 7
+- AC₂: \|A − 1\| = [1.83, 0.64, 0.09] at mod 3, 5, 7
+- AC₃: \|A − 1\| = [0.66, 0.19, 0.05] at mod 3, 5, 7
 
-Fitting |A − 1| = k · σ^(−p):
+Fitting \|A − 1\| = k · σ^(−p):
 
 - AC₂: p = 2.87, R² = 0.80
 - AC₃: p = 2.64, R² = 0.91
@@ -91,8 +91,8 @@ hypothesis but could also arise from other decay functions over this narrow rang
 
 AC₄ and AC₅ show a different pattern — V-shaped, with minimum at mod 5:
 
-- AC₄: |A − 1| = [0.27, 0.02, 0.04]
-- AC₅: |A − 1| = [0.20, 0.001, 0.03]
+- AC₄: \|A − 1\| = [0.27, 0.02, 0.04]
+- AC₅: \|A − 1\| = [0.20, 0.001, 0.03]
 
 This is harder to fit. The minimum at mod 5 could be noise at mod 7 (only 42 cross-class
 pairs, with high variance per pair), or it could reflect a genuine structural difference
@@ -101,7 +101,7 @@ between even and odd lags.
 ### AC₁: noisy but present
 
 AC₁ is the noisiest — it has the fewest cross-class pairs (6 at mod 3) and the largest
-amplification values. It also shows V-shape: |A − 1| = [4.61, 1.90, 2.70]. The LO bias
+amplification values. It also shows V-shape: \|A − 1\| = [4.61, 1.90, 2.70]. The LO bias
 mechanism (Lemke Oliver & Soundararajan 2016) dominates AC₁, and its interaction with
 modular decomposition is less clean than for higher lags.
 
@@ -156,8 +156,8 @@ computation. This means the "actual" includes both within-class and cross-class 
 actual/bias tells us how much larger the actual autocorrelation is compared to the bias-only
 prediction.
 
-**Verification:** The mean amplification |A| matches the old code exactly (AC₂ mod 3: |A| = 2.83;
-AC₂ mod 5: |A| = 1.64). The *overall* ratio differs from the old code: my code uses the
+**Verification:** The mean amplification \|A\| matches the old code exactly (AC₂ mod 3: \|A\| = 2.83;
+AC₂ mod 5: \|A\| = 1.64). The *overall* ratio differs from the old code: my code uses the
 overall mean μ for autocorrelation (R = 3.66 for AC₂ mod 3), while the old code used
 class-specific means (R = 0.936). Both decompositions are valid but answer different
 questions — the old code's R isolates within-class autocorrelation for cross-class pairs,
@@ -172,7 +172,7 @@ because it normalizes by each pair's individual bias.
   to noise.
 - **Power-law fits are consistent (not conclusive).** AC₂: R² = 0.80, AC₃: R² = 0.91.
   Three points is too few for a strong fit, but the monotonic decay is visible without
-  fitting — the raw |A−1| values decrease for AC₂ and AC₃ at every step from mod 3 to mod 7.
+  fitting — the raw \|A−1\| values decrease for AC₂ and AC₃ at every step from mod 3 to mod 7.
 
 ## What's Already Known
 
