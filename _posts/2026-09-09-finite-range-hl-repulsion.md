@@ -30,15 +30,15 @@ I computed the autocorrelation function AC(k) for k = 1 through 7, at N = 1M thr
 
 For each lag *k* and modulus *m*, I decompose the autocovariance into two parts:
 
-$$AC_k(r_1, r_2) = \text{bias}(r_1, r_2) + \text{residual}(r_1, r_2)$$
+<div>$AC_k(r_1, r_2) = \text{bias}(r_1, r_2) + \text{residual}(r_1, r_2)$</div>
 
 where the bias term is the class-mean prediction:
 
-$$\text{bias}(r_1, r_2) = \frac{n_{r_1,r_2}}{\text{Var}(g)} (\bar{g}_{r_1} - \mu)(\bar{g}_{r_2} - \mu)$$
+<div>$\text{bias}(r_1, r_2) = \frac{n_{r_1,r_2}}{\text{Var}(g)} (\bar{g}_{r_1} - \mu)(\bar{g}_{r_2} - \mu)$</div>
 
 and the residual is everything else. The amplification is:
 
-$$A_k(m, r_1, r_2) = \left|\frac{\text{actual}}{\text{bias}}\right|$$
+<div>$A_k(m, r_1, r_2) = \left|\frac{\text{actual}}{\text{bias}}\right|$</div>
 
 If the class means alone explained the autocorrelation, *A* would be 1. Values much larger than 1 mean the residual dominates — there is extra structure beyond what the class means predict.
 
@@ -56,7 +56,7 @@ Why lags 2-3 specifically? The HL k-tuple conjecture predicts correlations betwe
 
 Beyond lag 1, the AC values decrease monotonically:
 
-$$|AC_2| > |AC_3| > |AC_4| > |AC_5| > |AC_6| > |AC_7|$$
+<div>$|AC_2| > |AC_3| > |AC_4| > |AC_5| > |AC_6| > |AC_7|$</div>
 
 This contradicts an earlier finding (from inconsistent variance estimators) that AC₄ > AC₃. With a consistent estimator, the decay is monotonic. The LO bias (lag 1) is the dominant effect; HL repulsion creates the lag-2/3 bump; beyond lag 3, values decay smoothly.
 
