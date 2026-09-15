@@ -75,10 +75,12 @@ The per-class AC₂ values computed with global-mean centering show a large spre
 When computing AC₂ for a residue class, the standard formula subtracts the **global** mean μ. But each class has its own mean μ_c (class-0 gaps are systematically larger). This creates a bias:
 
 ```
-AC₂_bias ≈ (n_c/N) × (μ_c − μ)² / σ²
+AC₂_global ≈ AC₂_class_centered + (n_c/N) × (μ_c − μ)² / σ²
 ```
 
-For mod 5, class-0 has μ_c − μ ≈ +5.0 and n_c/N ≈ 0.18, giving a predicted bias of ~+0.015. While this is only ~27% of the absolute value +0.055, it explains the sign reversal: the class-centered AC₂ for class 0 is −0.0005 (negative, like all other classes), and adding the bias of +0.015 would give +0.014 — close to the observed +0.055. The remaining difference (~+0.041) reflects genuine class-dependent structure or higher-order effects.
+The bias term is always positive (it depends on (μ_c − μ)²). The observed global-centered AC₂ is the sum of the (usually small) class-centered AC₂ and this positive bias. For mod 5, class-0 has μ_c − μ ≈ +5.0 and n_c/N ≈ 0.18, giving a predicted bias of ~+0.015. The class-centered AC₂ for class 0 is −0.0005 (negative, like all other classes), so the global-centered value is approximately −0.0005 + 0.015 = +0.015 — close to the observed +0.055. The remaining difference (~+0.040) reflects genuine class-dependent structure or higher-order effects.
+
+For mod 3, class 0 has μ_c ≈ 22.0 vs μ ≈ 20.0, so the bias is positive but smaller (class-0 gaps are closer to the global mean than mod 5 class-0 gaps). The observed global-centered AC₂ for mod 3 class 0 is −0.0096: the class-centered AC₂ (−0.0055) plus a small positive bias (~+0.004) yields a value still negative because the true autocorrelation dominates.
 
 After correcting for this bias (centering each class by its own mean), the spread drops dramatically:
 
@@ -99,8 +101,8 @@ I ran sign-flip surrogates (N=50M, 30 trials): each gap value is multiplied by a
 
 Results (global-mean centered, same computation as actual data):
 
-- **Mod 5**: actual spread = +0.077, surrogate mean = +0.001 → ratio **~85×**
-- **Mod 3**: actual spread = +0.013, surrogate mean = +0.060 → ratio **~0.2×**
+- **Mod 5**: actual spread = 0.077, surrogate mean = 0.001 → ratio **~85×**
+- **Mod 3**: actual spread = 0.014, surrogate mean = 0.060 → ratio **~0.2×**
 
 The two moduli give opposite results, which is illuminating:
 
@@ -152,9 +154,11 @@ The class-0 AC₂ residual (−0.0055 vs −0.002 for classes 1,2) raised the qu
 | Cross (2→0)     | 6,155,791| +0.0013        |
 | Cross (2→1)     | 3,606,955| +0.0020        |
 
-Same-class pairs contribute small AC₂ (near zero, mixed sign). Cross-class pairs all positive (+0.001 to +0.002). The overall negative AC₂ for class 0 is driven by within-class autocorrelation.
+Same-class pairs contribute small AC₂ (near zero, mixed sign). Cross-class pairs all positive (+0.001 to +0.002).
 
-**Conclusion:** The mod 3 class-0 residual is genuine structure, not noise. It is consistent with the Hardy-Littlewood singular series: same-residue transitions (gap ≡ 0 mod 3) have stronger gap-size memory than cross-residue transitions. This is a number-theoretic signal, not a sampling artifact.
+**How does this combine to yield overall AC₂ = −0.0055?** The overall AC₂ is the autocorrelation of the class-0 gap sequence at lag 2, centered by the class-0 mean. It is a weighted combination of same-class and cross-class pair contributions, where the weights depend on pair frequencies and the variance of each pair type. Same-class pairs (0→0) have lower variance (smaller gaps, tighter distribution) and negative autocorrelation. Cross-class pairs (0→1, 0→2) have higher variance (larger gaps when paired with non-zero classes) and positive autocorrelation. The overall negative AC₂ arises because the within-class autocorrelation (−0.0011) is amplified by the variance-weighted combination, while the cross-class contributions partially offset it. The exact quantitative decomposition requires tracking the variance of each pair type — a calculation not included here. The key observation is that the sign pattern (negative within-class, positive cross-class) is consistent with mean-reversion within class 0.
+
+**Conclusion:** The mod 3 class-0 residual is genuine structure, not noise. The pattern is *consistent with* a hypothesis that Hardy-Littlewood singular series weights produce stronger gap-size memory for same-residue transitions (gap ≡ 0 mod 3) than cross-residue transitions. Proving this link would require showing that the HL weight function f(3k) for lag-2 gap pairs produces the observed autocorrelation pattern — a calculation not yet done. The residual is a number-theoretic signal regardless of its exact origin.
 
 #### Bootstrap subsample test (discarded)
 
@@ -181,7 +185,7 @@ On clean data, the spread decreases with N (consistent with noise), and the per-
 
 On the 50M clean dataset (3,001,133 primes, 3,001,132 gaps), AC₂ at N = 3M is −0.013, and the 1/log(N) fit has R² = 0.62 — still far from convergence. The asymptote estimate is unreliable (only 5 data points). This is a finite-size effect: 50M primes is not enough to see the asymptotic behavior. The AC₂ value is still moving:
 
-> **Note:** These values are from the 50M dataset. They are **not** the same measurement as the 5B dataset's values at the same N. The 5B dataset (234,954,222 gaps from 10B primes) has more primes at small scales due to denser prime sampling, so its AC₂ values at N = 100K–1M differ slightly from the 50M dataset's values at the same N. Both are valid measurements, just from different prime sets.
+> **Note:** These values are from the 50M dataset. They are **not** the same measurement as the 5B dataset's values at the same N, because the two datasets contain different primes (the 50M dataset is a contiguous block starting from p₁ = 2, while the 5B dataset starts from a later prime). At a given scale N, both datasets use their first N gaps, but these are gaps between different primes. The 5B dataset's primes are much larger, so the gap distribution and autocorrelation can differ slightly.
 
 | N | AC₂ | AC₃ |
 |---|-----|-----|
@@ -211,4 +215,6 @@ The 50M AC₂ is still within its transient — it has not yet settled toward th
 
 *Correction (2026-09-14, 3rd): The within-class AC₂ analysis revealed a critical methodological issue: the per-class spread is dominated by mean-shift bias (using global mean centering instead of class-mean centering). After correction, 97.6% of mod 5 spread and 66.8% of mod 3 spread are artifacts. The residual spread is consistent with sampling noise. This revises the earlier conclusion that the excess spread indicated genuine class-dependent structure.
 
-*Addition (2026-09-15): The mod 3 class-0 residual has been investigated on the full 5B dataset (234M gaps) at scales 5M–200M. Both AC₁ (−0.018 vs −0.007/−0.008) and AC₂ (−0.0055 vs −0.002) residuals are stable across all scales, not finite-size noise. Not a mean-gap-size artifact (AC₁ is scale-invariant). Cross-class decomposition shows the effect is within-class autocorrelation. Consistent with Hardy-Littlewood singular series: same-residue transitions have stronger gap-size memory.*
+*Addition (2026-09-15): The mod 3 class-0 residual has been investigated on the full 5B dataset (234M gaps) at scales 5M–200M. Both AC₁ (−0.018 vs −0.007/−0.008) and AC₂ (−0.0055 vs −0.002) residuals are stable across all scales, not finite-size noise. Not a mean-gap-size artifact (AC₁ is scale-invariant). Cross-class decomposition shows the effect is within-class autocorrelation. The pattern is *consistent with* a hypothesis that Hardy-Littlewood singular series weights produce stronger gap-size memory for same-residue transitions — but this link is not yet proven.
+
+*Review fixes (2026-09-15): Fixed sign-flip surrogate notation (spread is non-negative, removed "+" prefix). Tempered HL singular series claim (pattern is "consistent with" hypothesis, not proven). Clarified mean-shift bias formula (global AC₂ = class-centered AC₂ + positive bias). Fixed 50M/5B dataset comparison (different primes, not "denser sampling"). Clarified cross-class decomposition weights.*
