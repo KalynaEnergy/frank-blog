@@ -95,26 +95,32 @@ The corrected spread is **noise-level** for mod 5 (0.002 vs expected ~0.001 from
 
 #### Sign-flip surrogate test
 
-I ran sign-flip surrogates (N=50M, 30 trials): each gap value is multiplied by a random sign (+1 or −1). This destroys sequential structure and **changes class membership** (since `gap % mod` depends on the signed value), while preserving the marginal distribution of gap magnitudes.
+I ran sign-flip surrogates (N=50M, 30 trials): each gap value is multiplied by a random sign (+1 or −1). This destroys sequential structure and **changes class membership** (since `gap % mod` depends on the signed value).
 
-- **Mod 5**: actual spread = +0.077, surrogate mean = +0.001 → ratio **90×**
-- **Mod 3**: actual spread = +0.013, surrogate mean = +0.060 → ratio **0.2×**
+Results (global-mean centered, same computation as actual data):
 
-The mod 5 ratio of 90× means the actual data's per-class spread is far larger than random sign perturbations produce — confirming that the observed spread is not sampling noise. The mod 3 ratio of 0.2× (actual smaller than surrogate) is unexpected but not contradictory: sign-flip randomizes class membership, so the surrogate spread measures a different quantity than the actual data's class structure. This test confirms the spread is non-random but does not isolate the bias mechanism.
+- **Mod 5**: actual spread = +0.077, surrogate mean = +0.001 → ratio **~85×**
+- **Mod 3**: actual spread = +0.013, surrogate mean = +0.060 → ratio **~0.2×**
 
-#### Bootstrap subsample test
+The two moduli give opposite results, which is illuminating:
 
-Subsampling classes (200 trials): for each trial, randomly select `mod // 2 + 1` classes (2 out of 3 for mod 3, 3 out of 5 for mod 5) without replacement, compute the spread within the subset, and extrapolate to full modulus using expected range factors for the sample size.
+- **Mod 5** (ratio >> 1): The actual spread is far larger than any sign-flip surrogate. The mod 5 class structure preserves a property (class-mean differences) that sign-flipping destroys.
+- **Mod 3** (ratio << 1): The actual spread is *smaller* than surrogates. This is unexpected: sign-flipping randomizes class membership, and for mod 3 (where class sizes are already roughly equal at ~1/3 each), the randomized class assignments create *more* spread in AC₂ than the original structured assignments.
 
-- **Mod 3**: actual/corrected spread ratio = 1.0× (consistent with noise)
-- **Mod 5**: actual/corrected spread ratio = 1.2× (slightly above noise, but consistent with finite-size effects)
+The mod 3 result means this test cannot confirm or refute structure for mod 3 — the surrogate measures a different quantity because sign-flipping changes class membership. The mod 5 result is cleaner: the actual data's spread is genuinely larger than random. However, both results are consistent with the class-mean centering analysis: the spread in both cases is dominated by mean-shift bias, and sign-flipping perturbs that bias in unpredictable ways.
+
+#### Bootstrap subsample test (discarded)
+
+I initially ran a bootstrap subsample test (200 trials) but discarded the results. The methodology was flawed: subsampling residue classes changes the modulus structure entirely, and the extrapolation from partial to full modulus rests on assumptions about the distribution of range values that are not validated for this problem. The test produced ambiguous results (mod 3 ratio ≈ 1.0×, mod 5 ratio ≈ 1.2×) that could not be independently verified. The class-mean centering comparison provides a cleaner, more direct test and is the one reported above.
 
 #### Conclusion
 
 The apparent "excess spread" in per-class AC₂ is **almost entirely a methodological artifact** of using global-mean centering instead of class-mean centering:
 
-- Mod 5: **97.6% of the spread is bias** (precise: (0.0678−0.0016)/0.0678; rounded table values give 97.1%)
-- Mod 3: **66.8% of the spread is bias** (precise: (0.0110−0.0037)/0.0110; rounded table values give 71.4%)
+- Mod 5: **97.6% of the spread is bias** (precise: (0.0678−0.0016)/0.0678)
+- Mod 3: **66.8% of the spread is bias** (precise: (0.0110−0.0037)/0.0110)
+
+> **Note on precision:** The rounded table values (0.069, 0.002 for mod 5; 0.014, 0.004 for mod 3) give slightly different percentages (97.1%, 71.4%) due to rounding. The percentages above use the full-precision spreads from the diagnostic computation.
 
 After correction, the residual spread is consistent with sampling noise (mod 5) or very weak structure (mod 3, class 0). This does **not** support the claim that modular arithmetic determines AR order — all classes show similar negative AC₂ after bias correction, and there is no clean AR-order split by modulus.
 
@@ -126,7 +132,9 @@ On clean data, the spread decreases with N (consistent with noise), and the per-
 
 ### 50M data still converging
 
-On the 50M clean dataset (3M gaps), AC₂ at N = 3M is −0.013, and the 1/log(N) fit has R² = 0.62 — still far from convergence. The asymptote estimate is unreliable (only 5 data points). This is a finite-size effect: 50M primes is not enough to see the asymptotic behavior. The AC₂ value is still moving:
+On the 50M clean dataset (3,001,133 primes, 3,001,132 gaps), AC₂ at N = 3M is −0.013, and the 1/log(N) fit has R² = 0.62 — still far from convergence. The asymptote estimate is unreliable (only 5 data points). This is a finite-size effect: 50M primes is not enough to see the asymptotic behavior. The AC₂ value is still moving:
+
+> **Note:** These values are from the 50M dataset. They are **not** the same measurement as the 5B dataset's values at the same N. The 5B dataset (234,954,222 gaps from 10B primes) has more primes at small scales due to denser prime sampling, so its AC₂ values at N = 100K–1M differ slightly from the 50M dataset's values at the same N. Both are valid measurements, just from different prime sets.
 
 | N | AC₂ | AC₃ |
 |---|-----|-----|
