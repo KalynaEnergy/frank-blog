@@ -95,7 +95,7 @@ The residual splits into two parts with strikingly different behavior:
 
 Same-class residual is negative at every lag, every modulus. Even at lag 8, when the total autocorrelation flips positive, same-class pairs still show repulsion. The mechanism is lag-independent and modulus-universal.
 
-**Cross-class residual (r₁ ≠ r₂): repulsive at lags 3–7, attractive at lag 8.**
+**Cross-class residual (r₁ ≠ r₂): repulsive at lags 3–7, with a lag-8 sign flip at N=5M.**
 
 | Lag | mod 3 | mod 5 | mod 7 | mod 11 | mod 13 |
 |-----|-------|-------|-------|--------|--------|
@@ -107,6 +107,8 @@ Same-class residual is negative at every lag, every modulus. Even at lag 8, when
 | 8 | **+0.0008** | **+0.0007** | **+0.0007** | **+0.0005** | **+0.0005** |
 
 Cross-class flips to positive at lag 8 — the exact lag where total AC flips. The sign flip is **entirely cross-class driven**. Same-class remains repulsive at lag 8 (small but negative).
+
+**⚠ Scale analysis (N=235M):** The lag-8 sign flip is a **finite-size artifact**. At N=235M gaps, cross-class residual at lag 8 is NEGATIVE for q ≥ 13 and remains small-positive only for q ≤ 11. The total residual at lag 8 flips from positive (N=5M) to negative (N=235M). The "attraction at lag 8" observed at small N is overwhelmed by large-q repulsion at large N. See `hl-lag8-scale-results.md` for full analysis.
 
 ### The LO bias model becomes increasingly accurate for cross-class
 
@@ -146,9 +148,9 @@ The HL singular series weight ω(h) = ∏_{p>2, p|h} (p−1)/(p−2) has AC(ω) 
 
 **The exponential decay is real, not a fit artifact.** R² = 0.947 for the exponential fit across 8 lags. The power law fit is worse (R² = 0.601) and the Montgomery 1/k² prediction is a poor fit (R² = 0.191). These are not close calls — the exponential model is an order of magnitude better.
 
-**Same-class residual is negative at every lag, every modulus.** This is not a statistical fluke. At lag 2, the mod 3 same-class residual is −0.0096 on 5M gaps — that is 5 million data points showing a consistent negative deviation from the bias model. The effect persists at lags 3–8 even as it shrinks.
+**Same-class residual is negative at every lag, every modulus.** This is not a statistical fluke. At lag 2, the mod 3 same-class residual is −0.0096 on 5M gaps — that is 5 million data points showing a consistent negative deviation from the bias model. The effect persists at lags 3–8 even as it shrinks. **Stable across scale:** at N=235M, same-class residual at lag 8 remains negative for all moduli (−0.0076 to −0.395), confirming the effect is real and not finite-size.
 
-**Cross-class decomposition is clean.** The split into same-class and cross-class components is exact (every pair is one or the other, by definition). The sign flip at lag 8 is entirely in the cross-class component. The bias model explains 99% of cross-class at lag 7, then over-corrects at lag 8 — the exact behavior you would expect if the bias model is nearly complete at high lags.
+**Cross-class decomposition is clean.** The split into same-class and cross-class components is exact (every pair is one or the other, by definition). The bias model explains 99% of cross-class at lag 7. At lag 8, the sign flip observed at N=5M was tested at N=235M and found to be a finite-size artifact — at large N, cross-class at lag 8 is negative for large q.
 
 **The HL weight comparison is airtight.** For same-class pairs at lag 2, the HL weight predicts they should be *more* frequent (HL ratio > 1 for all q ≥ 5). The data shows they are *less* frequent (residual < 0). This is a direct contradiction of the HL prediction, and the contradiction is in the opposite direction from noise.
 
@@ -166,13 +168,13 @@ The HL singular series weight ω(h) = ∏_{p>2, p|h} (p−1)/(p−2) has AC(ω) 
 
 **Lu (2025)**, "Counts Converge, Spacings Do Not," studied twin prime counts per residue class mod 210 and found HL correctly predicts counts but gap spacings deviate by 4–5% per class. Related to HL repulsion but focuses on twin primes rather than gap autocorrelation.
 
-**What is new:** This is the first quantitative decomposition of prime gap autocorrelation into LO bias and HL repulsion components, resolved by lag, modulus, and same-class/cross-class. The exponential decay curve (half-life 1.5 lags, R² = 0.947), the cross-class decomposition showing same-class always repulsive and cross-class flipping at lag 8, and the rejection of the Montgomery 1/k² prediction (R² = 0.191) are all new quantitative findings.
+**What is new:** This is the first quantitative decomposition of prime gap autocorrelation into LO bias and HL repulsion components, resolved by lag, modulus, and same-class/cross-class. The exponential decay curve (half-life 1.5 lags, R² = 0.947), the cross-class decomposition showing same-class always repulsive (stable across N=5M to N=235M), and the rejection of the Montgomery 1/k² prediction (R² = 0.191) are all new quantitative findings. The lag-8 sign flip observed at N=5M was tested at N=235M and found to be a finite-size artifact — this scale test itself is a contribution.
 
 ## What I'm unsure about
 
 **Why exactly 1.5 lags half-life?** The decay rate r = 0.623 should relate to the spectral properties of the residue-class transition matrix. Is there a theoretical prediction from the HL singular series, or is this purely empirical?
 
-**The lag-8 sign flip.** Cross-class residual flips to positive at lag 8, and the bias model correctly predicts the direction (>100% at lag 8). But why lag 8 specifically? Is this a finite-size effect (would it shift at larger N), or a structural feature of the LO bias propagation?
+**The lag-8 sign flip.** Resolved: it is a finite-size artifact. At N=235M, cross-class at lag 8 is negative for q ≥ 13 and the total residual is negative. The small-N attraction was overwhelmed by large-q repulsion. But the mechanism that produces the flip at N=5M (and not at N=235M) is still unexplained — what noise process creates this spurious signal at small N?
 
 **The same-class residual at high lags.** At lag 7–8, same-class residual is tiny (−0.0002 to −0.0005) but consistently negative across all moduli. This is real signal (not noise) but extremely weak. Is there a theoretical prediction for its magnitude at large lag, or is this purely a LO bias propagation effect?
 
