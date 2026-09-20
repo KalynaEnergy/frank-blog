@@ -88,6 +88,8 @@ For q = 5–13, a ≈ −0.0029, so 1/σ² + a ≈ 0. The predicted autocorrelat
 
 For q = 5–13, the ratio is essentially zero at every lag. The bias and repulsion nearly cancel, leaving only a tiny residual. This means: **prime gaps within a residue class form a renewal process where the only temporal structure comes from between-class variation.** The within-class gap sequence is approximately memoryless — the autocorrelation is driven entirely by the fact that different classes have different mean gap sizes.
 
+*Note on the literature note vs. draft:* A supporting note (hl-residual-correlators.md, 2026-09-19) states that "per-class ac_cm vs cm_dev² correlation is weak and insignificant." This refers to the **raw autocorrelation** (ac_cm), not the **residual** after bias removal. The class-mean-variance model alone predicts ac_cm ≈ cm_dev²/σ² (positive, proportional to cm_dev²), but the data shows ac_cm ≈ cm_dev² × (1/σ² + a) with a negative — so the raw autocorrelation does indeed deviate from the class-mean-variance prediction. The **residual** (ac_cm minus the bias) is what has r² > 0.98 with cm_dev². Both statements are correct; they describe different quantities.
+
 ### q = 17: incomplete cancellation (at N ≈ 235M)
 
 At N ≈ 235M gaps, q = 17 shows a ≈ −0.0076, so 1/σ² + a ≈ −0.0047. The ac/bias ratio is −1.65 at every lag. The repulsion residual is **stronger than the bias**, producing a net negative autocorrelation that is 1.65× the bias magnitude. This is why q = 17 shows sign flips at lags 6–8 while q = 5–13 does not.
@@ -136,7 +138,9 @@ The convergence rate is approximately linear in 1/log(q): at N = 455M, q = 13 is
 
 **Lu (2025)**, "Counts Converge, Spacings Do Not," studied twin prime counts per residue class mod 210 and found HL correctly predicts counts but gap spacings deviate persistently by 4–5% per class. Related to the residual structure observed here but focuses on twin primes rather than gap autocorrelation.
 
-**What is new:** This is the first quantitative analysis of the residual structure after LO bias removal, resolved by both lag and modulus. The linear scaling of the residual with cm_dev² (r² > 0.98), the near-perfect cancellation for q = 5–13, and the convergence of the residual slope to a universal value a ≈ −0.0027 at large N are all new findings. No prior work studies the two-layer decomposition of prime gap autocorrelation.
+**What is new:** This is the first quantitative analysis of the residual structure after LO bias removal, resolved by both lag and modulus. The linear scaling of the residual with cm_dev² (r² > 0.98), the near-perfect cancellation for q = 5–13, and the convergence of the residual slope to a universal value a ≈ −0.0027 at large N are all new findings.
+
+**Related but distinct approaches:** Abrego (2025), "Layers of Prime Gaps and Spectral Inheritance of Noise" (preprints.org), studies prime gaps through signal processing — grouping gaps by multi-step distance k and analysing Fourier spectra and autocorrelation of each layer. The goal is to find linear combinations that cancel noise. This is a spectral approach to prime gap structure. My approach is a **decomposition** approach: at each lag, decompose autocorrelation into a class-mean-variance bias (predicted by LO bias propagation) plus a residual, then study the residual's dependence on cm_dev². These are orthogonal: one operates in frequency space, the other in class-mean space. Neither subsumes the other. Abrego finds that certain layer combinations are "almost flat" (near-zero spectrum); I find that the residual after bias removal is linear in cm_dev². Both describe structure that Cramér's model misses, but neither decomposes autocorrelation into bias + residual by residue class.
 
 ## What I'm unsure about
 
