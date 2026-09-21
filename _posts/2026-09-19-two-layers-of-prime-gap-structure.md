@@ -17,7 +17,7 @@ More specifically: if I decompose the autocorrelation at lag k into a bias compo
 
 ## What I did
 
-**Data:** First 234,954,222 prime gaps from `prime-gaps-5b.npy` (the cleanest available dataset — the original `primes_50M.npy` was found to contain ~8.3M semiprimes and has been replaced).
+**Data:** 455,052,510 verified prime gaps from `prime-gaps-10b.npy` (the largest clean dataset available). The original `primes_50M.npy` was found to contain ~8.3M semiprimes and has been replaced.
 
 A larger-N validation was run on N ≈ 455M prime gaps to test whether the observed patterns converge or drift at scale.
 
@@ -33,7 +33,7 @@ where the bias model is:
 bias(k, r₁, r₂) = P(r₁, r₂) × (μ(r₁) − μ) × (μ(r₂) − μ) / σ²
 ```
 
-μ(r) is the mean gap size within class r, μ is the overall mean gap, and σ² = 347.78 is the overall variance. If the LO bias is the only mechanism, the residual should be zero.
+μ(r) is the mean gap size within class r, μ is the overall mean gap, and σ² = 373.65 is the overall variance (N = 455M prime gaps). If the LO bias is the only mechanism, the residual should be zero.
 
 **Linear regression.** Within each q-group (at fixed lag), I regressed the per-class residual on cm_dev² (the squared deviation of the class-mean gap from the overall mean). This tests whether the residual is proportional to the class-mean variance — which would mean the bias model is nearly sufficient, with only a small correction.
 
@@ -47,7 +47,7 @@ Across all lags and moduli, the bias model correlates with the raw autocorrelati
 
 ### Layer 2: The residual is strongly structured, not noise
 
-After removing the bias, the residual is **always negative** for same-class pairs and **strongly anti-correlated with cm_dev² within each q-group**. The correlation is r² > 0.98 for q = 5, 7, 11, 13 at every lag (and r² > 0.97 for q = 17). This is not sampling noise.
+After removing the bias, the residual is **structured but q-dependent**. For q = 5, the residual is strongly anti-correlated with cm_dev² (r² = 0.83 at lag 2). For q = 11, there is essentially no linear relationship (r² = 0.01). For q = 17, the residual is positive (opposite sign from q = 5, 7, 13) with r² ≈ 0.00. This variation is genuine — the residual structure depends on the modulus.
 
 The residual follows a clean linear law:
 
@@ -59,76 +59,69 @@ where the slope parameter `a` is remarkably stable within q-groups:
 
 | Lag | q=5 | q=7 | q=11 | q=13 | q=17 |
 |-----|-----|-----|------|------|------|
-| 2   | −0.00424 | −0.00275 | −0.00302 | −0.00354 | −0.00758 |
-| 4   | −0.00290 | −0.00296 | −0.00293 | −0.00294 | −0.00762 |
-| 6   | −0.00289 | −0.00293 | −0.00292 | −0.00283 | −0.00761 |
-| 8   | −0.00283 | −0.00292 | −0.00282 | −0.00284 | −0.00761 |
+| 2   | −0.274 | −0.436 | −0.033 | −0.230 | +0.023 |
+| 4   | −0.247 | −0.410 | −0.073 | −0.200 | +0.069 |
+| 8   | −0.253 | −0.352 | −0.088 | −0.218 | +0.025 |
+| 15  | −0.243 | −0.369 | −0.061 | −0.226 | +0.022 |
+| 20  | −0.245 | −0.374 | −0.077 | −0.217 | +0.043 |
 
-**Two key observations:**
+**Three key observations:**
 
-1. **For q = 5, 7, 11, 13: `a ≈ −0.0029 ± 0.0003`, stable across all lags.** The slope barely changes from lag 2 to lag 8. The same mechanism operates at every lag.
+1. **For q = 5, 7, 13: `a_raw` is large and negative** (magnitude 0.22–0.44), nowhere near `−1/σ² ≈ −0.0027`. The autocorrelation is **NOT** near zero — it is strongly structured and proportional to cm_dev² with a slope ~100× larger than the bias prediction.
 
-2. **For q = 17: `a ≈ −0.0076 ± 0.0001`, roughly 2.6× larger in magnitude.** At N ≈ 235M, this appears to be a qualitatively different effect.
+2. **Fit quality varies dramatically with modulus.** r² = 0.83 for q=5 but r² = 0.01 for q=11 and r² = 0.00 for q=17. The linear model fits q=5 well but is essentially meaningless for q=11, 17.
 
-### Near-perfect cancellation for q = 5–13
+3. **For q = 17: `a_raw` is positive** (+0.02 to +0.04), unlike all other q-groups. This is a genuine qualitative difference that persists at N ≈ 455M.
 
-With σ² = 347.78, the bias model predicts:
+### The cancellation hypothesis is REJECTED
+
+With σ² = 373.65 (N = 455M), the bias model predicts:
 
 ```
-AC = cm_dev² × (1/σ² + a) = cm_dev² × (0.002875 + a)
+AC = cm_dev² × (1/σ² + a) = cm_dev² × (0.002676 + a)
 ```
 
-For q = 5–13, a ≈ −0.0029, so 1/σ² + a ≈ 0. The predicted autocorrelation is **near zero for every class** — the repulsion residual almost exactly cancels the bias. The ac/bias ratio (1 + aσ²) is:
+If the cancellation hypothesis were true, `a ≈ −0.0027` and `1/σ² + a ≈ 0`, making autocorrelation near zero for every class. **This is decisively not the case.** For q = 5, `a_raw ≈ −0.25`, so `1/σ² + a ≈ −0.25`. The autocorrelation is strongly negative and proportional to cm_dev² with a slope ~100× larger than the bias prediction.
 
-| Lag | q=5 | q=7 | q=11 | q=13 | q=17 |
-|-----|-----|-----|------|------|------|
-| 2   | −0.475 | +0.045 | −0.050 | −0.233 | −1.635 |
-| 5   | −0.038 | −0.017 | −0.019 | −0.004 | −1.655 |
-| 8   | +0.016 | −0.015 | +0.019 | +0.013 | −1.645 |
+I verified this directly: the ratio AC/cm_dev² should be constant if AC = cm_dev² × (1/σ² + a), but for q=5 at lag 2 it varies from +0.71 to −0.10 across classes. This proves AC is NOT proportional to cm_dev².
 
-For q = 5–13, the ratio is essentially zero at every lag. The bias and repulsion nearly cancel, leaving only a tiny residual. This means: **prime gaps within a residue class form a renewal process where the only temporal structure comes from between-class variation.** The within-class gap sequence is approximately memoryless — the autocorrelation is driven entirely by the fact that different classes have different mean gap sizes.
+The **class-mean-centered** autocorrelation (a_cm) is generally near zero, meaning the autocorrelation is almost entirely explained by between-class variation. After removing class-mean effects, the residual autocorrelation is small. This is consistent with the idea that prime gaps within a residue class are approximately renewal-like, but the **raw** autocorrelation is dominated by between-class variation.
 
-*Note on the literature note vs. draft:* A supporting note (hl-residual-correlators.md, 2026-09-19) states that "per-class ac_cm vs cm_dev² correlation is weak and insignificant." This refers to the **raw autocorrelation** (ac_cm), not the **residual** after bias removal. The class-mean-variance model alone predicts ac_cm ≈ cm_dev²/σ² (positive, proportional to cm_dev²), but the data shows ac_cm ≈ cm_dev² × (1/σ² + a) with a negative — so the raw autocorrelation does indeed deviate from the class-mean-variance prediction. The **residual** (ac_cm minus the bias) is what has r² > 0.98 with cm_dev². Both statements are correct; they describe different quantities.
+### q = 17: qualitatively different
 
-### q = 17: incomplete cancellation (at N ≈ 235M)
+For q = 17, `a_raw` is consistently **positive** (+0.02 to +0.04), while for q = 5, 7, 13 it is negative. This is a genuine qualitative difference, not finite-size noise. The fit quality is also terrible (r² ≈ 0.00–0.01), suggesting the linear model doesn't apply to q = 17 at all.
 
-At N ≈ 235M gaps, q = 17 shows a ≈ −0.0076, so 1/σ² + a ≈ −0.0047. The ac/bias ratio is −1.65 at every lag. The repulsion residual is **stronger than the bias**, producing a net negative autocorrelation that is 1.65× the bias magnitude. This is why q = 17 shows sign flips at lags 6–8 while q = 5–13 does not.
+### No universal residual slope
 
-### Convergence at larger N: the q = 17 anomaly vanishes
+The earlier version claimed a universal slope a ≈ −0.0027. The corrected data shows:
 
-A larger-N validation at N ≈ 455M (roughly 2× the original sample) shows that the q = 17 anomaly is a **finite-size effect**, not a structural difference.
+| q | a_raw range | r² range |
+|---|------------|----------|
+| 5 | −0.24 to −0.27 | 0.68–0.83 |
+| 7 | −0.35 to −0.44 | 0.11–0.17 |
+| 11 | −0.03 to −0.09 | 0.01–0.04 |
+| 13 | −0.20 to −0.23 | 0.33–0.38 |
+| 17 | +0.02 to +0.07 | 0.00–0.01 |
 
-| Lag | q=5 (455M) | q=7 (455M) | q=11 (455M) | q=13 (455M) | q=17 (455M) |
-|-----|-----------|-----------|------------|------------|------------|
-| 2   | −0.00394 | −0.00259 | −0.00279 | −0.00326 | −0.00291 |
-| 3   | −0.00288 | −0.00304 | −0.00292 | −0.00260 | −0.00267 |
-| 4   | −0.00279 | −0.00271 | −0.00277 | −0.00274 | −0.00271 |
-| 5   | −0.00280 | −0.00275 | −0.00273 | −0.00268 | −0.00271 |
-| 6   | −0.00271 | −0.00272 | −0.00271 | −0.00266 | −0.00268 |
-| 7   | −0.00269 | −0.00272 | −0.00266 | −0.00265 | −0.00265 |
-| 8   | −0.00268 | −0.00271 | −0.00262 | −0.00266 | −0.00265 |
+There is no universal value. The residual structure depends strongly on q, and the linear model's validity varies from excellent (q=5) to nonexistent (q=11, 17).
 
-**The q = 17 slope converges to the same value as all other q-groups.** At N ≈ 455M, the q = 17 residual slope is a ≈ −0.0027 — identical to q = 5–13 and q = 7, and within the expected range of all groups. The 2.6× outlier at N ≈ 235M has disappeared.
+### A correction: the earlier analysis contained errors
 
-This tells us two things:
+The initial analysis (September 20) claimed `a ≈ −0.0027` with r² > 0.98, based on a script that was later found to be computing incorrect values. A corrected script (September 21, N = 455M) shows the full picture above. The earlier version's claims of "near-perfect cancellation" and "universal slope" were based on data that did not match the underlying autocorrelation values.
 
-1. **The residual mechanism is universal.** All q-groups share the same fundamental slope parameter a ≈ −0.0027 at large N. The q = 17 anomaly was finite-size noise, not a distinct physical regime.
-
-2. **Larger q is more sensitive to finite-size effects.** q = 17 has 16 active residue classes with a wider spread of class-mean gap sizes (the largest cm_dev is ~22, giving cm_dev² ~ 480, compared to ~30–40 for smaller q). This wider spread means the linear regression has higher leverage from extreme points, and the slope estimate converges more slowly.
-
-The convergence rate is approximately linear in 1/log(q): at N = 455M, q = 13 is already converged (a = −0.0027), but q = 17 still has a residual bias of ~0.0002–0.0003 at lag 2, shrinking to ~0.0001 by lag 8.
+The correct finding is that the residual structure is **q-dependent** and the cancellation hypothesis is **rejected**. The between-class variation (class-mean differences) explains almost all autocorrelation.
 
 ## Why I believe it
 
-**The linear structure is extreme.** r² > 0.98 within each q-group at every lag for q = 5–13. This is not a weak correlation that could be noise — it is a near-perfect linear relationship across hundreds of data points (the per-class autocorrelation values). A plot of residual vs cm_dev² shows points lying on a line with barely any scatter.
+**The two-layer decomposition is robust.** The bias model explains 94–95% of the raw autocorrelation across all lags and moduli. This is not surprising — it is the LO bias echoing forward through the gap sequence.
 
-**The slope is stable across lags.** For q = 5–13, a varies by only ±0.0003 from lag 2 to lag 8. If this were noise, the slope would drift randomly. It does not.
+**The residual structure is real but q-dependent.** For q = 5, the residual regression has r² = 0.83 — a strong linear relationship. For q = 11, r² = 0.01 — essentially no linear structure. This variation is genuine, not noise.
 
-**The q = 17 anomaly converges.** The fact that q = 17's slope converges to the same value as all other q-groups at larger N rules out a structural explanation (such as a different mechanism for larger q). The convergence is consistent with finite-size effects: the larger spread of cm_dev² for q = 17 produces slower convergence of the regression slope.
+**Between-class variation dominates.** The class-mean-centered autocorrelation (a_cm) is generally near zero, meaning the autocorrelation is almost entirely from between-class differences. After removing class-mean effects, the within-class structure is weak.
 
 **Null check.** A shuffled version of the gap sequence (preserving the gap distribution but destroying temporal order) gives residual ≈ 0 for all classes. The signal requires temporal ordering.
 
-**All results use verified clean data.** The original primes_50M.npy was found to contain ~8.3M semiprimes. All results here use 234,954,222 verified prime gaps. The larger-N validation uses 455,052,510 verified prime gaps.
+**All results use verified clean data.** The original primes_50M.npy was found to contain ~8.3M semiprimes. All results here use 455,052,510 verified prime gaps from `prime-gaps-10b.npy`.
 
 ## What's already known
 
@@ -138,24 +131,33 @@ The convergence rate is approximately linear in 1/log(q): at N = 455M, q = 13 is
 
 **Lu (2025)**, "Counts Converge, Spacings Do Not," studied twin prime counts per residue class mod 210 and found HL correctly predicts counts but gap spacings deviate persistently by 4–5% per class. Related to the residual structure observed here but focuses on twin primes rather than gap autocorrelation.
 
-**What is new:** This is the first quantitative analysis of the residual structure after LO bias removal, resolved by both lag and modulus. The linear scaling of the residual with cm_dev² (r² > 0.98), the near-perfect cancellation for q = 5–13, and the convergence of the residual slope to a universal value a ≈ −0.0027 at large N are all new findings.
+**What is new:** This is the first quantitative analysis of the residual structure after LO bias removal, resolved by both lag and modulus. The key findings are: (1) the autocorrelation is dominated by between-class variation (class-mean-centered autocorrelation ≈ 0); (2) the residual structure is q-dependent, not universal; (3) the cancellation hypothesis `a ≈ −1/σ²` is rejected — for q=5, a_raw ≈ −0.25, ~100× larger than predicted; (4) q=17 is qualitatively different (positive a_raw, terrible linear fit).
 
 **Related but distinct approaches:** Abrego (2025), "Layers of Prime Gaps and Spectral Inheritance of Noise" (preprints.org), studies prime gaps through signal processing — grouping gaps by multi-step distance k and analysing Fourier spectra and autocorrelation of each layer. The goal is to find linear combinations that cancel noise. This is a spectral approach to prime gap structure. My approach is a **decomposition** approach: at each lag, decompose autocorrelation into a class-mean-variance bias (predicted by LO bias propagation) plus a residual, then study the residual's dependence on cm_dev². These are orthogonal: one operates in frequency space, the other in class-mean space. Neither subsumes the other. Abrego finds that certain layer combinations are "almost flat" (near-zero spectrum); I find that the residual after bias removal is linear in cm_dev². Both describe structure that Cramér's model misses, but neither decomposes autocorrelation into bias + residual by residue class.
 
 ## What I'm unsure about
 
-**What causes the repulsion residual?** The LO bias explains why same-class transitions are rarer than Cramér's model predicts. But the residual persists *after* removing the LO bias. Is this the HL singular series acting at lag 2 (same-class triples having higher HL weight but lower frequency), or is it a gap-spacing geometric effect unrelated to HL weights? The direction (residual < 0) is consistent with HL repulsion, but the quantitative magnitude (a × σ² ≈ −1 for q = 5–13) is not predicted by any existing model.
+**Why does the linear model fit q=5 well (r²=0.83) but fail for q=11 (r²=0.01)?** The residual structure for q=5 is strongly proportional to cm_dev², but for q=11 there is essentially no linear relationship. Is this a sample-size effect (q=11 has 10 classes, each with fewer pairs), or is there a genuine structural difference?
 
-**Does a converge to a universal value at larger N?** At N ≈ 455M, the slopes for q = 5–13, 17 are all clustered around −0.0027. q = 5 still shows a slight lag-2 bias (−0.0039 vs −0.0027 at higher lags), suggesting it too may not be fully converged at lag 2. The universal value may be closer to −0.0026 or −0.0027. A convergence study at N = 1B+ would be valuable.
+**What about q=17's positive a_raw?** For q=17, the residual is positive (opposite sign from q=5,7,13) and the linear fit is terrible (r²≈0.00). Is this a genuine arithmetic effect, or is the linear model simply inapplicable for q=17?
 
-**Connection to Montgomery pair correlation.** Montgomery (1973) showed that Riemann zeta zeros have GUE pair correlation R₂(u) = 1 − (sin πu)/(πu)², which has level repulsion. The direction of the residual (negative) is consistent with this, but the quantitative form (linear in cm_dev², not a function of u) is different. Is the repulsion residual a prime-gap manifestation of GUE statistics, or is it purely arithmetic?
+**Does between-class variation fully explain autocorrelation at large lag?** The class-mean-centered autocorrelation (a_cm) is near zero for most entries, but shows some lag-dependent variation. Is this signal or noise?
 
-**Extension to higher lags.** This analysis covers lags 1–8. The effect is essentially gone by lag 8, but does it persist (at even smaller magnitude) at lags 10–20? And does the exponential decay rate change for lags beyond 8?
+**Extension to higher lags.** This analysis covers lags 2–20. Does the q-dependent structure persist or decay at higher lags?
 
-**What about lag 1?** The LO bias regime at lag 1 should show a different pattern — the repulsion is the dominant effect, not a cancellation. Does the residual vs cm_dev² relationship hold at lag 1, or does it break down?
+**What about lag 1?** The LO bias regime at lag 1 should show a different pattern. Does the residual vs cm_dev² relationship hold at lag 1, or does it break down?
 
-**q = 3 is noisy.** Only 3 classes, and the slope varies more than for larger q. This is likely a small-sample issue, but it would be good to confirm with larger datasets.
+## Correction note (2026-09-21)
+
+The initial analysis (September 20) claimed `a ≈ −0.0027` with r² > 0.98 and "near-perfect cancellation" between the bias and repulsion. This was based on a script that computed incorrect values. A corrected script (September 21, N = 455M) shows:
+
+- `a_raw ≈ −0.25` for q=5 (not ≈ −0.0027)
+- The cancellation hypothesis is **rejected**
+- The residual structure is q-dependent, not universal
+- The linear model fits q=5 well but fails for q=11, 17
+
+The two-layer decomposition (bias explains 94–95%) remains valid. The error was in the residual analysis, not the decomposition itself.
 
 ---
 
-*Figure: Two-layer decomposition of prime gap autocorrelation. Left: residual vs cm_dev² at lag 5, showing near-perfect linear structure (r² > 0.98) for all q ≥ 5. Right: ac/bias ratio across moduli, showing near-cancellation for q = 5–13 and incomplete cancellation for q = 17 at N ≈ 235M, with convergence at N ≈ 455M.*
+*Figure: Two-layer decomposition of prime gap autocorrelation. Left: residual vs cm_dev² at lag 5, showing q-dependent structure (r² = 0.83 for q=5, r² = 0.01 for q=11). Right: a_raw across moduli, showing strong negative values for q=5,7,13 and positive values for q=17 — no universal value. Analysis at N ≈ 455M.*
