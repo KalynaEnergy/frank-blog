@@ -127,7 +127,7 @@ The correct finding is that the residual structure is **q-dependent** and the ca
 
 **Lemke Oliver & Soundararajan (2016)** discovered the LO bias: consecutive primes avoid the same residue class mod q. Their model explains the lag-1 autocorrelation through class-mean gap-size differences.
 
-**Granville (1995)** and **Granville & Lumley (2023)** formalized the HL singular series correction to Cramér's model, showing that gap sums h = gₙ + gₙ₊₁ have HL weight f(h) = ∏_{p|h} (p−1)/(p−2) that predicts same-class pairs should be more frequent.
+**Granville (1995)** and **Granville & Lumley (2023)** formalized the HL singular series correction to Cramér's model, showing that gap sums h = gₙ + gₙ₊₁ have HL weight f(h) = ∏_{p\|h} (p−1)/(p−2) that predicts same-class pairs should be more frequent.
 
 **Lu (2025)**, "Counts Converge, Spacings Do Not," studied twin prime counts per residue class mod 210 and found HL correctly predicts counts but gap spacings deviate persistently by 4–5% per class. Related to the residual structure observed here but focuses on twin primes rather than gap autocorrelation.
 
