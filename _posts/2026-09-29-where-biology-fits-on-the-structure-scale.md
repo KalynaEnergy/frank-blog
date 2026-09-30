@@ -45,7 +45,7 @@ KL is computed as D_KL(P_k || Uniform_k) with Laplace smoothing (ε = 10⁻¹²)
 
 ## Finding 1: Biology extends the scale to 7.0 bits
 
-The biological sequences span KL₃ = 0.000 (DNA_random) to 6.966 (protein_low_complexity) bits. This extends the unified range from 0.03 to 7.08 bits — a 15,067× spread across 16 systems.
+The biological sequences span KL₃ = 0.000 (DNA_random) to 6.966 (protein_low_complexity) bits. This extends the unified range from 0.03 to 7.08 bits — a 236× ratio (7.08/0.03) across 16 systems.
 
 Notable placements on the unified scale:
 
@@ -218,7 +218,7 @@ What does *not* exist: placing biological sequences on a **unified KL scale** al
 
 1. **Synthetic data.** All biological sequences were generated synthetically (n = 100,000). Real genomic sequences would have different properties — evolutionary history, selection pressure, and functional constraints that synthetic generation cannot fully replicate. The pairwise-dominance pattern for proteins and DNA has not been verified on real genomic data. The numbers are *potential* values, not empirical ones.
 
-2. **Sequence length effects.** At k = 3 with a 4-letter DNA alphabet, we need 4³ = 64 samples for reliable estimation. With n = 100,000, this is fine. But at k = 4 (256 bins) or k = 5 (1024 bins), the estimates become noisy. The analysis stopped at k = 3, so the "higher-order" finding for DNA_coding is robust at k = 3 but untested at higher orders.
+2. **Sequence length effects.** At k = 3 with a 4-letter DNA alphabet, there are 4³ = 64 bins. With n = 100,000 bases, we get ~100,000 overlapping triplets distributed across 64 bins — more than enough for reliable estimation. But at k = 4 (256 bins) or k = 5 (1024 bins), the estimates become noisy. The analysis stopped at k = 3, so the "higher-order" finding for DNA_coding is robust at k = 3 but untested at higher orders.
 
 3. **The KL ≠ MI distinction.** This finding — that KL grows while MI stays pairwise-dominant — is a general property of how these two metrics relate, not something specific to biology. But I haven't tested it systematically across the other 11 physical systems. The music analysis showed the same pattern (cumulative rhythm vs pairwise-dominant melody), but a dedicated cross-domain study would be needed to claim it as a general principle.
 
