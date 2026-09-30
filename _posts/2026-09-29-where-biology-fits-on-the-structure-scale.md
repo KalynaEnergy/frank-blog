@@ -145,7 +145,7 @@ Codon bias creates a non-uniform triplet distribution, but this non-uniformity i
 
 Pairwise amino acid dependencies are weak (0.003–0.008 bits), but triplet redundancy is consistently negative (TMI ≈ −0.04 bits). This means triplets are *less* than what pairs alone would predict — not because there is no triplet structure, but because the pairwise dependencies already over-explain the triplet distribution. The absolute magnitude (≈0.04 bits) is small relative to the KL excess (0.17–0.77 bits), confirming that KL growth is driven by non-uniformity, not triplet synergy.
 
-**The DNA homopolymer is the exception:** TMI = +0.374 bits (20% of ΣMI), the highest relative triplet synergy among non-periodic biological sequences. Homopolymer runs create a Markov-2 structure — the probability of observing base X at position 2 depends on whether position 1 is a run extension or run termination.
+**The DNA homopolymer is the exception:** TMI = +0.374 bits (20% of ΣMI), the highest relative triplet synergy among non-periodic biological sequences. Homopolymer runs create a Markov-2 structure — the probability of observing base X at position 2 depends on whether position 1 is a run extension or run termination. Unlike the periodic sequences (which have exact algebraic constraints producing large TMI), the homopolymer's synergy is structural but proportionally modest — it satisfies pairwise-dominance (TMI/ΣMI = 20% < 50%) while still being synergistic. This is what makes it interesting rather than exceptional.
 
 **The complete picture:**
 
@@ -162,9 +162,11 @@ For the first two — the biologically interesting cases — KL grows while MI i
 
 ## Finding 5: Pairwise-dominance holds across 24+ synthetic systems
 
-Across all 11 physical/mathematical systems AND all 13 biological sequence variants, **triplet MI is always subdominant to pairwise MI** (|TMI| < 50% of |ΣMI|) — except for periodic sequences (microsatellite, purine-pyrimidine encoding) where exact algebraic constraints create genuine triplet synergy.
+Across all 11 physical/mathematical systems AND all 13 biological sequence variants, **triplet MI is subdominant to pairwise MI** (|TMI| < 50% of |ΣMI|) for every non-periodic sequence. The only exceptions are periodic sequences (DNA_microsatellite, DNA_purine_pyrimidine), where exact algebraic constraints create large, genuine triplet synergy.
 
-This strengthens the claim from the network-information-theory project: **structure is fundamentally pairwise-dominant in synthetic systems.** The pattern now spans primes, proteins, DNA, networks, cellular automata, spin glasses, flocking birds, epidemic models, and musical melodies.
+**Important distinction:** The homopolymer is non-periodic but still shows triplet synergy (TMI = +0.374 bits). However, its TMI/ΣMI ratio (20%) is below the 50% threshold — it satisfies pairwise-dominance while being synergistic. This is a non-periodic sequence that breaks the "rule" of redundancy without breaking pairwise-dominance.
+
+This strengthens the claim from the network-information-theory project: **structure is fundamentally pairwise-dominant in non-periodic synthetic systems.** The pattern now spans primes, proteins, DNA, networks, cellular automata, spin glasses, flocking birds, epidemic models, and musical melodies.
 
 **Caveat:** The biological sequence data here is entirely synthetic (n = 100,000). The pairwise-dominance pattern for biological sequences has not been verified on real genomic data. The physical/mathematical systems were mostly simulated (not empirical), so the universality claim applies to the *models* studied, not to natural systems per se.
 
