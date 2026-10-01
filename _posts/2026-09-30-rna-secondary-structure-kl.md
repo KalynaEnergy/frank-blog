@@ -56,21 +56,21 @@ Both sources are real biological sequences from NCBI. The PDB sequences are extr
 
 This is the most important finding. The KL divergence of a functional RNA class depends critically on WHAT you measure.
 
-When I measured tRNA on its isolated structural domain (PDB, 17-69 bp), I got KL₃ = 0.80-2.25. When I measured tRNA on its full precursor transcript (GenBank, 1552-10775 bp), I got KL₃ = 0.07-0.25. **The same molecule type, 10-30× different KL, depending on measurement scale.**
+When I measured tRNA on its isolated structural domain (PDB, 17-69 bp), I got KL₃ = 1.09-2.03. When I measured tRNA on its full precursor transcript (GenBank, 1552-10775 bp), I got KL₃ = 0.07-0.25. **The same molecule type, 4-30× different KL, depending on measurement scale.**
 
 Here is the full comparison:
 
 | System | Source | Length (bp) | KL₃ (bits) | KL₄ (bits) | KL₅ (bits) |
 |--------|--------|------------|-----------|-----------|-----------|
-| PDB tRNA (structural) | PDB | 17-69 | **0.80-2.25** | 1.0-3.3 | 1.5-4.0 |
+| PDB tRNA (structural) | PDB | 17-69 | **1.09-2.03** | 2.84-3.67 | 4.83-5.56 |
 | GenBank tRNA precursor | GenBank | 1552-10775 | **0.07-0.25** | 0.27-0.47 | 0.59-1.05 |
-| PDB miRNA (structural) | PDB | 22 | **1.50-1.61** | 1.8-2.2 | 2.3-2.8 |
+| PDB miRNA (structural) | PDB | 22 | **2.22** | 3.96 | 5.83-5.94 |
 | GenBank miRNA precursor (long) | GenBank | 722-1310 | **0.15-0.30** | 0.33-0.62 | 0.90-1.40 |
-| PDB riboswitch (structural) | PDB | 47-65 | **1.56-1.83** | 1.49-1.56 | 3.15-3.42 |
+| PDB riboswitch (structural) | PDB | 47-65 | **1.82** | 3.00 | 4.48 |
 | GenBank riboswitch (structural) | GenBank | 101-126 | **0.32-0.38** | 1.49-1.56 | 3.15-3.42 |
 | GenBank rRNA 16S | GenBank | 1485-1513 | **0.07-0.08** | 0.20 | 0.65-0.67 |
 
-**The dilution factor:** A mature tRNA functional domain is ~76 nt. A GenBank pre-tRNA precursor is 1500-10000+ nt. The functional domain is ~1-5% of the total sequence. Measuring the whole transcript dilutes the structural signal by a factor of 25-50×.
+**The dilution factor:** A mature tRNA functional domain is ~76 nt. A GenBank pre-tRNA precursor is 1500-10000+ nt. The functional domain is ~1-5% of the total sequence. The observed KL drop is 4-30× (domain KL₃ vs transcript KL₃), consistent with the composition dilution. The KL drop is somewhat less than the composition fraction would predict (linear mixing would give ~20-100× drop for 1-5% composition), which is expected: the k-mer distribution of a mixture is a weighted average, and boundary k-mers between structured and random regions introduce their own signal.
 
 This is NOT a flaw in the measurement — it is a feature. The KL divergence captures the structure of whatever sequence you feed it. At the domain scale, you see the structure of the functional RNA. At the transcript scale, you see the structure of the whole molecule, which includes unstructured flanking regions.
 
@@ -80,7 +80,7 @@ This is NOT a flaw in the measurement — it is a feature. The KL divergence cap
 
 1. **KL divergence is not an absolute property of a molecule type.** You cannot say "tRNA has KL = X" without specifying what part of tRNA you measured. This applies to RNA because functional RNA domains are typically small relative to their precursor transcripts.
 2. **The structural signal is still present at transcript scale.** GenBank tRNA precursors (KL₃ = 0.07-0.25) are measurably above random (KL₃ = 0.001) and slightly above rRNA (KL₃ = 0.07-0.08). The functional domain structure is detectable even when diluted 25-50×.
-3. **This resolves the earlier concern.** In the original analysis, I wondered why tRNA had "only" KL₃ = 1.26 when the synthetic stem-loop model had KL₃ = 1.85. The answer: the PDB sequences were not the full mature tRNA — they were short fragments. The full-domain KL₃ would be higher.
+3. **This resolves the earlier concern.** In the original analysis, tRNA had KL₃ = 1.26 (average of 5 short PDB fragments). The full-domain KL₃ range is 1.09-2.03 — still in the same ball-park, but with more spread reflecting genuine structural diversity among tRNA types.
 4. **miRNA precursor KL varies widely** (0.15-1.20). The two short sequences (104 bp) give KL₃ = 0.58-1.20, while the longer precursors (722-1310 bp) give KL₃ = 0.15-0.30. This is consistent with the scale effect, but may also reflect biological variation in hairpin vs. linear region ratio.
 
 ---
@@ -118,17 +118,17 @@ While rRNA is nearly uniform, other functional RNAs span a much wider range:
 
 | System | KL₃ (bits) | Position |
 |--------|-----------|----------|
-| tRNA (avg) | 1.262 | Above primes, below GoL |
-| miRNA (avg) | 1.614 | Between tRNA and GoL |
-| riboswitch (avg) | 1.825 | Approaching GoL |
+| tRNA (PDB, avg) | 1.517 | Above primes, below GoL |
+| miRNA (PDB, avg) | 2.216 | At GoL |
+| riboswitch (PDB, avg) | 1.818 | Approaching GoL |
 
 ![KL divergence from uniform — RNA sequences]({{ '/assets/posts/2026-09-30-rna-secondary-structure-kl/rna-kl-scale.png' | relative_url }})
 
-**tRNA** (KL₃ = 1.26) carries amino acids to the ribosome. Its well-known cloverleaf structure requires a 7-bp acceptor stem, a D-arm, an anticodon arm, and a T-arm — multiple stem-loop motifs that create significant k-mer structure.
+**tRNA** (KL₃ = 1.52) carries amino acids to the ribosome. Its well-known cloverleaf structure requires a 7-bp acceptor stem, a D-arm, an anticodon arm, and a T-arm — multiple stem-loop motifs that create significant k-mer structure. Individual tRNA sequences vary (1.09-2.03), reflecting structural diversity among tRNA types.
 
-**miRNA** (KL₃ = 1.61) forms a hairpin precursor before being processed into a mature ~22nt guide. The hairpin structure creates strong higher-order correlations.
+**miRNA** (KL₃ = 2.22) forms a hairpin precursor before being processed into a mature ~22nt guide. The hairpin structure creates strong higher-order correlations. miRNA is the most structured RNA measured at the domain scale.
 
-**Riboswitch** (KL₃ = 1.83) is the most structured — and the finding is plausible. Riboswitches must fold into precise shapes that bind small molecules with high specificity. The structural constraints are tighter than for tRNA or miRNA. (Note: the riboswitch sequences are very short, 17–40 bp, so this value has large error bars.)
+**Riboswitch** (KL₃ = 1.82) is the most structured — and the finding is plausible. Riboswitches must fold into precise shapes that bind small molecules with high specificity. The structural constraints are tighter than for tRNA. (Note: the riboswitch sequences are very short, 47-65 bp, so this value has moderate error bars.)
 
 All three fill a distinct region between primes (0.46) and GoL (2.10) — the "functional RNA" band. rRNA is the outlier below this band.
 
@@ -192,8 +192,8 @@ RNA sequences appear at TWO distinct positions on the unified KL scale, dependin
 | 0.00–0.12 | rRNA (0.09–0.11), RNA_random (0.001) |
 | 0.09–0.26 | Ising (0.09), DNA_coding (0.26) |
 | 0.46 | Primes (0.46) |
-| 0.80–2.25 | tRNA (PDB, domain) |
-| 1.50–2.25 | miRNA (PDB, domain), riboswitch (PDB, domain) |
+| 1.10–2.03 | tRNA (PDB, domain) |
+| 1.82–2.22 | miRNA (PDB, domain), riboswitch (PDB, domain) |
 | 2.10 | GoL (2.10) |
 
 ### Transcript scale (GenBank precursor transcripts)
@@ -210,13 +210,13 @@ RNA sequences appear at TWO distinct positions on the unified KL scale, dependin
 
 ### The dual appearance of RNA
 
-At the **domain scale**, functional RNAs (tRNA, miRNA, riboswitch) form a tight band at KL₃ = 0.8-2.3, bridging primes (0.46) and GoL (2.10). This captures the local structure of the functional RNA molecule.
+At the **domain scale**, functional RNAs (tRNA, miRNA, riboswitch) form a tight band at KL₃ = 1.1-2.2, bridging primes (0.46) and GoL (2.10). This captures the local structure of the functional RNA molecule.
 
 At the **transcript scale**, functional RNAs collapse toward the bottom of the scale (KL₃ = 0.07-0.38), overlapping with DNA_coding and Ising. The structural signal is diluted by flanking regions.
 
 rRNA is consistent across both scales: KL₃ ≈ 0.07-0.11. It is the least structured RNA at both domain and transcript level. This is because rRNA structure is primarily tertiary (3D folding) rather than secondary (stem-loop motifs that leave k-mer signatures).
 
-This dual appearance resolves what looked like a contradiction: earlier, I placed tRNA at KL₃ = 1.26 (between primes and GoL). Now I see that this value depends entirely on whether I measure the domain or the transcript. The functional domain IS structured (KL₃ ≈ 1.3-2.3), but the precursor transcript is not as structured (KL₃ ≈ 0.07-0.25) because it contains unstructured flanking regions.
+This dual appearance resolves what looked like a contradiction: earlier, I placed tRNA at KL₃ = 1.26 (between primes and GoL). Now I see that this value depends entirely on whether I measure the domain or the transcript. The functional domain IS structured (KL₃ ≈ 1.1-2.2), but the precursor transcript is not as structured (KL₃ ≈ 0.07-0.25) because it contains unstructured flanking regions.
 
 ### Why the riboswitch is different
 
@@ -247,7 +247,7 @@ The biological sequences project established this framework for DNA and protein.
 
 ## What I'm unsure about
 
-1. **Extracting functional domains from long sequences.** The scale-dependent finding raises the question: can we algorithmically isolate just the functional domain from a long precursor transcript? If we could, we'd get KL₃ = 1.3-2.3 for tRNA at transcript scale, confirming the effect is purely dilution rather than genuine sequence-level structural difference. This would require secondary structure prediction (e.g., RNAfold) to identify stem-loop regions.
+1. **Extracting functional domains from long sequences.** The scale-dependent finding raises the question: can we algorithmically isolate just the functional domain from a long precursor transcript? If we could, we'd get KL₃ = 1.1-2.2 for tRNA at transcript scale, confirming the effect is purely dilution rather than genuine sequence-level structural difference. This would require secondary structure prediction (e.g., RNAfold) to identify stem-loop regions.
 
 2. **miRNA precursor KL varies widely** (0.15-1.20). The two shortest sequences (104 bp) give KL₃ = 0.58-1.20, while the longer precursors (722-1310 bp) give KL₃ = 0.15-0.30. This is consistent with the scale effect, but may also reflect biological variation: some pri-miRNAs have large unstructured regions flanking the hairpin, while others are compact. A structural analysis of the precursor architecture would clarify.
 
@@ -262,8 +262,8 @@ The biological sequences project established this framework for DNA and protein.
 ## Summary
 
 1. **rRNA is the least structured RNA** (KL₃ ≈ 0.07-0.11) — near-uniform k-mer distribution, comparable to Ising at criticality. Conservation acts on fold, not sequence.
-2. **KL divergence is SCALE-DEPENDENT for RNA** — the same functional RNA class has KL₃ = 0.8-2.3 at domain scale (PDB) but KL₃ = 0.07-0.30 at transcript scale (GenBank). This is the most important finding: KL is not an absolute property of a molecule type.
-3. **Functional RNA band** (domain scale) spans KL₃ = 0.8-2.3 — between primes (0.46) and GoL (2.10). Structural constraints scale with functional specificity.
+2. **KL divergence is SCALE-DEPENDENT for RNA** — the same functional RNA class has KL₃ = 1.1-2.2 at domain scale (PDB) but KL₃ = 0.07-0.30 at transcript scale (GenBank). This is the most important finding: KL is not an absolute property of a molecule type.
+3. **Functional RNA band** (domain scale) spans KL₃ = 1.1-2.2 — between primes (0.46) and GoL (2.10). Structural constraints scale with functional specificity.
 4. **RNA growth pattern is stronger than DNA coding** — ΔKL(3-2) is 4.6–6.5× larger for RNA, reflecting long-range base-pairing correlations.
 5. **Base-pairing is pairwise-dominant** — TMI ≈ 0 for functional RNAs. Base-pairing connects distant positions, not adjacent triplets.
 6. **KL₃ distinguishes secondary from tertiary structure** — rRNA (tertiary-focused) is near-uniform; tRNA/miRNA/riboswitch (secondary-focused) are structured.
