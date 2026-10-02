@@ -119,6 +119,31 @@ To confirm that the scale effect is purely dilution (not a genuine structural di
 3. **This resolves the earlier concern.** In the original analysis, tRNA had KL₃ = 1.26 (average of 5 short PDB fragments). The full-domain KL₃ range is 1.09-2.03 — still in the same ball-park, but with more spread reflecting genuine structural diversity among tRNA types.
 4. **miRNA precursor KL varies widely** (0.15-1.20). The two short sequences (104 bp) give KL₃ = 0.58-1.20, while the longer precursors (722-1310 bp) give KL₃ = 0.15-0.30. This is consistent with the scale effect, but may also reflect biological variation in hairpin vs. linear region ratio.
 
+### Scale-dependence is NOT RNA-specific
+
+I tested whether scale-dependent KL is a property of RNA alone, or a general property of biomolecular sequences. I ran sliding window KL₃ on 6 UniProt protein sequences (p53, HBA, INS, ALBU, TTN, ER) at five window sizes: 30, 50, 100, 200, and 300 aa.
+
+**Result: ALL 6 proteins show monotonically decreasing KL₃ with window size.**
+
+| Protein | WS=30 | WS=50 | WS=100 | WS=200 | WS=300 | Global | Drop | % |
+|---------|-------|-------|--------|--------|--------|--------|------|-----|
+| p53 | 8.86 | 7.79 | 6.61 | 5.48 | 4.88 | 4.48 | 3.98 | 45% |
+| ER | 8.44 | 7.55 | 6.43 | 5.43 | 4.87 | 3.89 | 3.57 | 42% |
+| ALBU | 8.23 | 7.42 | 6.47 | 5.43 | 4.88 | 3.91 | 3.35 | 41% |
+| INS | 8.37 | 7.51 | 6.48 | — | — | 6.33 | 1.89 | 23% |
+| HBA | 8.23 | 7.42 | 6.37 | — | — | 5.87 | 1.86 | 23% |
+| TTN | 8.16 | 7.42 | 6.37 | — | — | 5.59 | 1.79 | 22% |
+
+Total drops: 1.79-3.98 bits (22-45%). The pattern is identical to RNA: KL₃ decreases as window size increases, because compositional bias is diluted by flanking sequence.
+
+**But here is the surprise:** domain KL₃ does NOT consistently exceed flanking KL₃. The p53 DNA-binding domain (DBD, residues 94-292) has KL₃ = 5.37, essentially identical to its flanking regions (5.50). At KL₁, the DBD is LESS structured than flank (0.16 vs 0.44) — the flank is proline-rich (16% vs 7% in DBD), a known feature of p53's intrinsically disordered N-terminal transactivation domain.
+
+This reveals what KL divergence actually measures: **compositional non-uniformity, not structural domains.** The DBD is a well-structured globular domain (β-sandwich with DNA-contacting loop), but it has uniform amino acid composition — its structure is encoded in tertiary contacts, not primary sequence composition. The "dilution" observed in the scale-dependent KL analysis is compositional bias dilution, not functional domain dilution.
+
+**This has implications for the RNA analysis:** the structural signal that KL₃ captures at domain scale is the compositional non-uniformity of stem-loop motifs (which create biased k-mer distributions), not the 3D fold itself. rRNA (tertiary-focused) is near-uniform because it lacks the stem-loop compositional bias. tRNA/miRNA/riboswitch (secondary-focused) are structured because their stem-loops create biased k-mer distributions.
+
+**The takeaway:** KL divergence is a property of the molecule AND the measurement scale, and it measures compositional non-uniformity, not functional structure. This applies to both RNA and proteins.
+
 ---
 
 ## Finding 1: rRNA is the least structured RNA
@@ -273,9 +298,9 @@ RNA structure prediction using information theory is a mature field:
 - **Sükösd, Hofacker & Stadler (2013)** — Entropy over RNA structural probability distributions.
 - **Zuker & Stiegler (1981)** — mfold algorithm: free energy minimization using thermodynamics.
 
-**What does not exist:** Placing individual RNA sequences on a **unified KL scale** alongside physical systems (primes, Ising, GoL) and other biological sequences (DNA coding, proteins) is novel. Even more novel: the finding that RNA KL divergence is **scale-dependent** — the same molecule type shows dramatically different KL depending on whether you measure its functional domain or its full precursor transcript. No prior work in this literature has addressed measurement-scale effects on KL divergence for RNA.
+**What does not exist:** Placing individual RNA sequences on a **unified KL scale** alongside physical systems (primes, Ising, GoL) and other biological sequences (DNA coding, proteins) is novel. Even more novel: the finding that RNA KL divergence is **scale-dependent** — the same molecule type shows dramatically different KL depending on whether you measure its functional domain or its full precursor transcript. No prior work in this literature has addressed measurement-scale effects on KL divergence for RNA. Nor does prior work address whether scale-dependent KL is a property of proteins.
 
-The biological sequences project established this framework for DNA and protein. RNA fills the remaining gap, and reveals a methodological insight that likely applies to other biomolecules: KL divergence depends on measurement scale.
+The biological sequences project established this framework for DNA and protein. RNA fills the remaining gap, and reveals a methodological insight that likely applies to other biomolecules: KL divergence depends on measurement scale. Subsequent analysis confirmed scale-dependence for 6 UniProt proteins (drops of 22-45%), but also revealed that protein domain KL₃ does not consistently exceed flanking KL₃ — suggesting that "domain extraction" by KL₃ works for RNA stem-loops (which are compositionally biased) but may not work for protein domains (which are not necessarily compositionally biased).
 
 *(Note: This novelty claim is based on literature review, not exhaustive search. The cited papers (Schneider/Stormo/Gorodkin/Ding/Sükösd/Zuker) do not place individual RNA sequences on a unified scale alongside physical systems. However, this was not verified by reading the primary sources — the literature file is a summary, not the original papers.)*
 
@@ -291,7 +316,7 @@ The biological sequences project established this framework for DNA and protein.
 
 4. **k=5 estimates for long sequences.** The GenBank sequences are long enough that k=5 KL estimates should be reliable, but the growth pattern KL₁ → KL₂ → KL₃ → KL₄ → KL₅ needs careful interpretation. At transcript scale, the growth is driven by the dilution gradient (the functional domain contributes more at low k where its k-mers are still captured, less at high k where the dilution dominates). This is a real effect, not noise.
 
-5. **Is the scale effect universal for all biomolecules?** RNA shows strong scale dependence because functional domains are small relative to precursor transcripts. The same question applies to proteins: does a domain's KL depend on whether you measure the isolated domain or the full polypeptide chain? This is an open question for future work.
+5. **Is the scale effect universal for all biomolecules?** Yes — tested on 6 UniProt proteins (p53, HBA, INS, ALBU, TTN, ER), ALL show monotonically decreasing KL₃ with window size (drops of 22-45%). But the interpretation is subtle: domain KL₃ does NOT consistently exceed flanking KL₃ (p53 DBD: 5.37 vs flank 5.50). This means the "domain extraction" that works for RNA (sliding window KL₃ extracts structured regions) may not work for proteins, because protein domains are not necessarily compositionally biased. KL₃ captures compositional non-uniformity, which is common in RNA stem-loops but not universal in protein domains.
 
 ---
 
