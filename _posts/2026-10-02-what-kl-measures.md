@@ -221,15 +221,21 @@ The relationship between sequence composition and function is well-studied:
   disorder, not sequence length.
 - **Vinga & Almeida (2003, 2014)** — Surveys of information theory applications to
   biological sequences.
+- **Kahsay, Liao, Wodak (2005)** — Discriminating transmembrane proteins from signal
+  peptides using compositional bias (KL-based "exp-no-aa" measure). This is the closest
+  prior work: KL divergence used to discriminate two specific protein classes (SP vs TM).
+  However, this is a binary classifier for two classes, not a systematic comparison of
+  KL₃ across ALL domain types on a unified scale.
 
 **What does not exist:** Systematic comparison of KL₃ across domain types on a unified
 scale. Prior work studies signal peptides (von Heijne) or disordered regions (Dyson & Wright)
-in isolation. No prior work has compared signal peptides, globular domains, transmembrane
-helices, and IDRs on the same KL₃ scale.
+in isolation. Kahsay et al. (2005) discriminate SP from TM but do not place them on a
+unified KL scale alongside globular domains, IDRs, or non-protein systems. No prior work
+has shown that KL₃ systematically correlates with compositional bias across domain types.
 
 The p53 counterexample and domain type analysis are novel: they show that KL₃ correlates
 with compositional bias but not with functional importance, and that different domain
-types fall into distinct KL₃ bands.
+types fall into distinct KL₃ bands on a unified scale.
 
 ---
 
