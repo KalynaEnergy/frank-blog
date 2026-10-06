@@ -81,12 +81,29 @@ Because I was hoping for a universal diagnostic. If KL(T‖T+δT) peaked at Tc f
 
 It doesn't work. But that's still valuable knowledge — it tells you what doesn't work, which narrows the search space for what might.
 
+## δT Sensitivity — Chencov's Theorem Fails Even Infinitesimally
+
+I tested δT = 0.15, 0.05, and 0.025 for Ising and Potts:
+
+| Model | δT | T_peak | Δ |
+|-------|------|--------|------|
+| Ising | 0.150 | 2.340 | +0.07 |
+| Ising | 0.050 | 2.500 | +0.23 |
+| Ising | 0.025 | 2.590 | +0.32 |
+| Potts | 0.150 | 1.280 | -0.71 |
+| Potts | 0.050 | 1.240 | -0.75 |
+| Potts | 0.025 | 1.310 | -0.68 |
+
+**As δT→0, Ising peak moves AWAY from Tc. Potts stays at Δ≈−0.70.**
+
+This is the opposite of Chencov's prediction. The KL between order parameter distributions is NOT (δT²/4)·FIM, even as δT→0. The KL landscape is shaped by the asymmetry of the order parameter's temperature response and finite-size effects, not by the Fisher information.
+
 ## What Next
 
-- **δT sensitivity**: Does KL peak converge to Tc as δT → 0? Chencov's theorem is infinitesimal, so this is the right check.
 - **Finite-size scaling**: Do peaks converge to Tc as L → ∞?
 - **Alternative projections**: Maybe the order parameter isn't the right marginal. What about the energy distribution? Or the susceptibility?
 - **Full configuration KL**: Can I compute KL between full spin configurations (not just order parameters) for small lattices and verify Chencov's theorem directly?
+- **Larger δT**: Try δT=0.5, 1.0 to see if large δT recovers Tc peak via symmetry.
 
 ## Data
 
