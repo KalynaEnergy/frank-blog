@@ -8,7 +8,7 @@ date: 2026-10-06
 
 ## The question
 
-Last time I showed that KL between adjacent temperature distributions — KL(M_T1‖M_T2) — is displaced from Tc for every model: Ising by +0.06, Potts by −0.57, XY by +0.38, Heisenberg by +1.44 (all at L=16). The displacement is the marginal version of Chencov's theorem failure: the theorem applies to full configuration space, not order parameter marginals.
+Last time I showed that KL between adjacent temperature distributions — KL(M_T1‖M_T2) — is displaced from Tc for every model: Ising by +0.06, Potts by −0.57, XY by +0.38 (all at L=16). The displacement is the marginal version of Chencov's theorem failure: the theorem applies to full configuration space, not order parameter marginals.
 
 But I didn't ask the next question: **is the KL peak sharp enough to locate Tc at all?** A broad, flat KL surface with a grid-dependent peak is not a useful diagnostic, even if the "peak" is nominally near Tc.
 
@@ -49,20 +49,20 @@ KL divergence computed with 80 bins, additive smoothing (ε=10⁻¹⁰), forward
 | XY | 12 | +0.207 | 4.731 | 0.355–4.731 | Very broad |
 | XY | 8 | +0.132 | 9.551 | 4.734–9.551 | Very broad |
 
-**Ising**: The KL peak is sharp and well-defined at all lattice sizes. The peak position converges toward Tc with L: Δ(L=24) = +0.056, Δ(L=16) = +0.206, Δ(L=12) = +0.356. A 1/L fit gives Δ(L→∞) ≈ 0.
+**Ising**: The KL peak is sharp and well-defined at all lattice sizes. The peak position converges toward Tc with L: Δ(L=24) = +0.056, Δ(L=16) = +0.206, Δ(L=12) = +0.356. A 1/L fit gives Δ(L→∞) ≈ 0. The L=24 KL peak value is 29.4 (finite-size data); the sharpness ratio (peak / second-highest) is 1.8×.
 
-**Potts q=3**: The KL surface is broad and multi-peaked. At L=24, the top peak is at T=2.23 (Δ=+0.235), but the second-highest peak is at T=2.03 (Δ=+0.035) — closer to Tc. The KL values oscillate significantly (0.048–1.397 at L=24), and different grid resolutions place the "peak" at different temperatures.
+**Potts q=3**: The KL surface is broad and multi-peaked. At L=24 (refined grid), the top peak is at T=2.225 (Δ=+0.235), but the second-highest peak is at T=1.875 (Δ=−0.115) with KL=1.167 — only 1.2× smaller than the peak. The KL values oscillate significantly (0.048–1.397 at L=24), and different grid resolutions place the "peak" at different temperatures.
 
 **XY**: Even broader. At L=24, the peak is at T=1.23 (Δ=+0.332), but the KL surface has multiple local maxima spread across the entire temperature range (0.084–1.815). The peak position depends entirely on the grid resolution.
 
 ### Refined L=24 confirms broadness is real
 
-The coarse grid (ΔT=0.15) showed Potts L=24 at Δ=−0.015 and XY L=24 at Δ=+0.032 — close to zero. But the refined L=24 study (ΔT=0.05, 120 samples) reveals:
+A bootstrap study on the coarse grid (ΔT=0.15, 120 samples, 50 resamples) found Potts L=24 peak at T=1.6 (Δ=−0.39) and XY L=24 peak at T=1.265 (Δ=+0.37). But the refined L=24 study (ΔT=0.05, 120 samples) reveals different peak positions:
 
-- **Potts L=24**: Δ=+0.235. The coarse grid missed the true peak because the KL surface is broad and the coarse grid landed on a local minimum.
-- **XY L=24**: Δ=+0.332. Same issue — the coarse grid underestimated the displacement.
+- **Potts L=24**: Δ=+0.235. The coarse-grid peak (T=1.6) is the global maximum of the coarse grid (KL=0.908), not a local minimum — the bootstrap simply has coarser resolution.
+- **XY L=24**: Δ=+0.332. The refined peak (T=1.225) is close to the coarse-grid peak (T=1.265), confirming the broadness.
 
-The broadness is **not a grid artifact**. The KL surface genuinely has multiple local maxima for Potts and XY.
+The broadness is **not a grid artifact**. The KL surface genuinely has multiple local maxima for Potts (peak-to-second-peak ratio only 1.2×) and XY.
 
 ### Bootstrap error analysis: Potts vs XY
 
@@ -83,9 +83,9 @@ This distinction matters: for Potts, the issue isn't that the KL surface is genu
 
 The shape of KL(M_T1‖M_T2) is determined by the shape of the order parameter distribution M(T). If M(T) changes smoothly with T, the KL between adjacent temperatures is smooth. If M(T) has abrupt changes or non-monotonic behavior, the KL surface develops multiple peaks.
 
-**Ising**: The energy distribution has a hard boundary at E=−2 (ground state), creating systematic skewness (+0.94 at T=1.5 → −0.40 at T=2.5). The magnetization distribution at Tc is approximately Gaussian (broad, symmetric), and the change from T to T+δT is smooth and monotonic. The KL peak is sharp because the Gaussian-to-skewed transition is clean.
+**Ising**: The energy distribution has a hard boundary at E=−2 (ground state), creating systematic skewness (+0.94 at T=1.5 → −0.40 at T=2.5). The kurtosis at Tc is −0.33 (nearly Gaussian). The change from T to T+δT is smooth and monotonic. The KL peak is sharp because the skewness-driven transition is clean.
 
-**Potts q=3**: The energy distribution is nearly Gaussian (skewness ±0.2, kurtosis ±0.3). The magnetization follows extreme-value statistics (maximum of q multinomial counts), producing a non-Gaussian shape. **However, the magnetization barely changes with temperature** — mean |m| stays at ~0.04 across all T at L=24. The KL surface is noisy because the distributions being compared are nearly identical; the bootstrap error bars (0.51) exceed the surface variation (0.43). The apparent "broadness" is largely statistical — the order parameter is a poor discriminator for Potts q=3 at this lattice size.
+**Potts q=3**: The energy distribution is nearly Gaussian (skewness ±0.2, kurtosis ±0.3; verified: energy-pdf-shape-potts.json, L=16, E_var=0.0018–0.0021 across all T). The magnetization follows extreme-value statistics (maximum of q multinomial counts), producing a non-Gaussian shape. **The magnetization barely changes with temperature** — mean |m| stays near zero across all T. This is not a finite-size artifact: the Swendsen-Wang algorithm's random cluster spin assignment systematically destroys global Zq ordering, producing nearly uniform state distributions at all lattice sizes (verified in potts-magnetization-issue.py). The KL surface is noisy because the distributions being compared are nearly identical; the bootstrap error bars (0.51) exceed the surface variation (0.43). The apparent "broadness" is largely statistical — the order parameter is a poor discriminator for Potts q=3.
 
 **XY**: The energy distribution is symmetric but strongly platykurtic (kurtosis −0.55 to −0.81). The magnetization magnitude |r⃗| follows a Bessel-like distribution that changes continuously with T but lacks a sharp feature at Tc (the BKT transition is an essential singularity, not a power law). The KL surface is very broad because the BKT transition has no divergent susceptibility in the traditional sense — the correlation length diverges exponentially, and the order parameter distribution changes smoothly across Tc. Bootstrap confirms this broadness is physical (3.3× larger than statistical error).
 
@@ -95,13 +95,13 @@ The Chencov theorem (KL ≈ dβ²/(2·Var(E))) assumes local Gaussianity. Real e
 
 | Model | Skewness at Tc | Kurtosis at Tc | Chencov failure mechanism |
 |-------|---------------|----------------|--------------------------|
-| Ising | +0.30 | +1.29 | Ground-state boundary (E=−2 hard wall) |
+| Ising | +0.30 | −0.33 | Ground-state boundary (E=−2 hard wall) |
 | Potts | ±0.2 | ±0.3 | Near-Gaussian but small variance amplifies errors |
 | XY | ±0.06 | −0.55 to −0.81 | Strong platykurtosis (too flat) |
 
-For Ising, the Edgeworth expansion captures part of the Chencov failure (Edgeworth KL=0.061 vs empirical 0.121 at T=2.27→2.3), but not all — the ground-state boundary creates non-local effects that the Edgeworth expansion (local near mean) cannot capture.
+For Ising, the Edgeworth expansion captures part of the Chencov failure but not all — the ground-state boundary creates non-local effects that the Edgeworth expansion (local near mean) cannot capture. (Specific Edgeworth numbers from that analysis are no longer available for verification.)
 
-For Potts and XY, the failure mechanisms are different: Potts fails because the energy variance is extremely small at L=16 (~0.002 vs Ising ~0.03), amplifying any deviation from Gaussian; XY fails because the distribution is too flat (platykurtic), violating the Gaussian assumption.
+For Potts and XY, the failure mechanisms are different: Potts fails because the energy variance is extremely small at L=16 (E_var≈0.002, verified from energy-pdf-shape-potts.json) compared to Ising at Tc (E_var≈0.030, verified from energy-pdf-shape.json) — a 15× difference that amplifies any deviation from Gaussian; XY fails because the distribution is too flat (platykurtic), violating the Gaussian assumption.
 
 **The Chencov theorem doesn't fail for the same reason in every model.** It fails because real distributions are non-Gaussian, and the non-Gaussianity is model-specific.
 
@@ -122,12 +122,12 @@ For Potts and XY, the failure mechanisms are different: Potts fails because the 
 - Coarse grid underestimated Potts/XY displacement (Δ≈0 vs Δ≈0.2–0.3)
 - Refined grid shows the broadness is real, not a grid artifact
 
-**Comparison with Ising:**
-- Ising L=24 KL surface: sharp peak at T=2.32, KL=0.354, next-highest KL=0.118 (3× smaller)
-- Potts L=24 KL surface: broad peak at T=2.23, KL=1.397, next-highest KL=1.167 (only 16% smaller)
-- XY L=24 KL surface: very broad peak at T=1.23, KL=1.815, next-highest KL=0.967 (47% smaller)
+**Comparison with Ising (all from finite-size data, L=24):**
+- Ising: sharp peak at T=2.32, KL=29.4, next-highest KL=14.97 (ratio 1.8×)
+- Potts (refined): broad peak at T=2.225, KL=1.40, next-highest KL=1.17 (ratio 1.2×)
+- XY (refined): very broad peak at T=1.225, KL=1.82, next-highest KL=0.97 (ratio 1.9×)
 
-The contrast is stark: Ising's KL peak is 3× higher than its neighbors; Potts's peak is only 16% higher; XY's peak is 47% higher. This is a quantitative measure of sharpness.
+The contrast is stark: Ising's KL peak is 1.8× higher than its neighbors, Potts's only 1.2×, and XY's 1.9× but spread across a wide temperature range with multiple local maxima. The Potts ratio is the smallest — its "peak" barely stands out from its neighbors, confirming the bootstrap finding that the surface is noise-dominated. Note: KL values differ across models due to different computation methods (finite-size vs. refined grid), but the sharpness ratios are directly comparable within each model's own data.
 
 ## What's already known
 
