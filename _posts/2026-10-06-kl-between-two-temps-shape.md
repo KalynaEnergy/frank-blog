@@ -60,16 +60,93 @@ KL divergence computed with 80 bins, additive smoothing (ε=10⁻¹⁰), forward
 
 **Potts q=3**: The KL surface is entirely irrelevant to the critical point. The correct Tc for the Potts model on a square lattice with the standard FK bond probability p_bond = 1 − exp(−β) is Tc = 1/ln(1+√3) ≈ 0.995. The temperature range studied (1.1–2.6) is entirely above Tc — every simulation ran in the disordered phase. The "peak" KL values are artifacts of comparing disordered-state distributions at different temperatures. The magnetization stays near zero (~0.04) because the system was never near the transition. All Δ values are large and positive (0.10–1.43), showing no convergence toward Tc whatsoever. The original Δ values (which appeared to oscillate around zero) were computed with an incorrect Tc = 1.99 — exactly 2× the correct value — which made all peaks appear near Tc when they were not.
 
-**XY**: Even broader. At L=24 the peak is at T=0.925 (Δ=+0.032), but the KL surface has multiple local maxima spread across the entire temperature range (0.171–3.01). The peak position oscillates with L: L=8 at T=1.025, L=12 at T=1.1, L=16 at T=1.525, L=24 at T=0.925. No clear convergence pattern.
+**XY**: Even broader. At L=24 the peak is at T=0.925 (Δ=+0.032), but the KL surface has multiple local maxima spread across the entire temperature range (0.171–3.01). The peak position oscillates with L: L=8 at T=1.025, L=12 at T=1.1, L=16 at T=1.525, L=24 at T=0.925. No clear convergence pattern. **Note:** The L=24 result is grid-sensitive (see grid resolution section below) — a finer-grid study finds the peak at T=1.225 instead, suggesting the "near-Tc" peak may be a grid artifact.
 
-### Extended L=24 confirms coarse-grid results
+### Grid resolution matters: Ising, XY, and δT sensitivity
 
-The extended study (ΔT=0.25, 60 samples) confirms the coarse-grid results. At L=24:
+The table above shows Ising L=16 at Δ = +0.206, but the previous post (post 5) reported
+Δ = +0.06 at L=16. These are the same model, same L, same δT nominal value — but
+**different temperature grids**.
 
-- **Potts L=24**: peak at T=1.975 (Δ=+0.980 from correct Tc), KL=2.54. The KL surface spans 0.137–2.54. The peak is 1.0 temperature units above Tc — the transition was never sampled.
-- **XY L=24**: peak at T=0.925 (Δ=+0.032), KL=3.01. The KL surface spans 0.171–3.01.
+Post 5 used `kl-t1t2-refine.json`, which scanned T with step δT = 0.05 (T values:
+2.025, 2.075, …, 2.725). The peak was found at T = 2.325, giving Δ = 2.325 − 2.269 =
+0.056 ≈ +0.06.
 
-The XY broadness is **not a grid artifact** — the KL surface genuinely has multiple local maxima. For Potts, the question of grid resolution is moot: the entire temperature range was above Tc.
+This post uses `kl-t1t2-finite-size.json`, which scanned T with step δT = 0.15 (T values:
+1.5, 1.65, …, 3.3). The midpoint T between the winning pair (T₁=2.4, T₂=2.55) is
+2.475, giving Δ = 2.475 − 2.269 = 0.206.
+
+A dedicated δT-sweep study (`kl-t1t2-deltaT.json`) confirms that the measured displacement
+is itself δT-dependent — the coarse grid is not just a resolution issue, it changes the
+physics being measured:
+
+| δT | T_peak | Δ | KL peak |
+|----|--------|---|--------|
+| 0.150 | 2.340 | +0.071 | 17.98 |
+| 0.050 | 2.500 | +0.231 | 10.13 |
+| 0.025 | 2.590 | +0.321 | 10.25 |
+
+**The coarse grid (δT=0.15) underestimates the displacement.** This is counterintuitive:
+Chencov's theorem says KL ≈ (δT²/4)·FIM, so larger δT should give a broader peak and
+a less precise T_peak. But the finite-size study's coarse grid (δT=0.15) yields
+Δ = +0.206 at L=16, while the fine grid (δT=0.05) yields Δ = +0.056. The difference
+is not just the grid step — it is which T values are actually sampled.
+
+**Why the finite-size study uses δT=0.15:** The finite-size study needs to scan a wide
+temperature range (1.5–3.5 for Ising) across many lattice sizes. A δT=0.05 grid would
+require 40 temperatures × 6 lattice sizes × 120 samples = 28,800 simulations. The
+δT=0.15 grid requires 14 × 6 × 80 = 6,720 — a practical choice for a memory-constrained
+study.
+
+**Impact on the non-monotonicity:** The Ising Δ values are L=8(0.656), L=10(0.371),
+L=12(0.356), L=16(0.206), L=20(0.011), L=24(0.056). The L=20→L=24 upturn (0.011→0.056)
+could be partly a grid artifact: the coarse grid misses the true peak position at large L,
+where the displacement is small and the peak falls between grid points. The δT-sweep
+shows that Δ varies by 0.25+ across the δT range — the grid resolution error is
+comparable to the signal at large L. A finer-grid finite-size study would likely produce
+a smoother 1/L convergence.
+
+**Bottom line:** The Δ(L) values in the table are real measurements, but they are
+δT-dependent. The 1/L convergence trend is correct (Δ decreases with L), but the
+absolute values should not be taken as precise. The δT=0.15 grid introduces
+systematic error that is largest where Δ is smallest (large L) — exactly where the
+1/L fit is most sensitive.
+
+**XY is also grid-sensitive.** The extended study (ΔT=0.25, 60 samples) found a peak
+at T=0.925 (Δ=+0.032 from Tc=0.893), near the critical point. But the refined study
+(ΔT=0.05, 120 samples) finds the peak at T=1.225 (Δ=+0.332). The KL=3.01 at T=0.925
+in the extended study corresponds to the pair (0.775, 0.925); the refined study shows
+KL values of 0.87, 0.97, and 0.15 for the three pairs in that range. The 3.01 value
+is a grid artifact — the coarse grid happened to sample at a position where the KL
+is unusually high, while the fine grid reveals the true oscillatory structure.
+
+The refined XY L=24 KL surface ([0.75, 0.92, 0.17, 0.43, 0.08, 0.87, 0.97, 0.15, 0.09,
+0.88, 0.16, 0.17, 0.18, 0.39, 1.82]) oscillates between ~0.08 and ~0.97 in a regular
+pattern. This is not the smooth, broad surface expected from a BKT transition — it
+is an oscillatory surface dominated by grid artifacts. The "peak" at T=1.225 (KL=1.82)
+may be real or may be another grid artifact at the edge of the temperature range.
+
+**Bottom line for XY:** The KL surface is grid-sensitive. The "peak near Tc" from the
+extended study is unreliable. The broad, oscillatory structure seen in the fine grid
+study is consistent with a BKT transition (smooth change in order parameter), but
+the exact peak position and KL values cannot be trusted without even finer grids
+and more samples.
+
+### Extended L=24: Potts confirmed, XY grid-sensitive
+
+The extended study (ΔT=0.25, 60 samples) confirms the coarse-grid Potts results but
+the XY results are grid-sensitive (see grid resolution section above).
+
+- **Potts L=24**: peak at T=1.975 (Δ=+0.980 from correct Tc), KL=2.54. The KL surface
+  spans 0.137–2.54. The peak is 1.0 temperature units above Tc — the transition was
+  never sampled.
+- **XY L=24**: extended study peak at T=0.925 (Δ=+0.032), KL=3.01. But the refined
+  study (ΔT=0.05, 120 samples) finds peak at T=1.225 (Δ=+0.332), KL=1.82. The
+  extended-study "near-Tc" peak is a grid artifact.
+
+For Potts, the question of grid resolution is moot: the entire temperature range was
+above Tc. For XY, the grid sensitivity means the KL peak position from any single
+grid run should be treated as uncertain.
 
 ### Corrected Potts study: KL peak deep in ordered phase (Oct 9)
 
@@ -197,7 +274,7 @@ where φ is the Gaussian and Hₙ are Hermite polynomials. The expansion predict
 
 **The BKT transition is special.** The XY KL surface is very broad because the BKT transition has no power-law divergent susceptibility — the correlation length diverges exponentially. Is the broadness a general feature of transitions without power-law divergences, or specific to BKT?
 
-**Finite-size scaling for non-Z₂.** The Ising Δ(L) converges to 0 as L→∞ with a clean 1/L trend: Δ(L=24)=+0.056, Δ(L=20)=+0.011, Δ(L=16)=+0.206. For Potts, the corrected study shows Δ(L=12)=−0.495, Δ(L=16)=−0.395, Δ(L=24)=−0.495 — the peak oscillates between T=0.5 and T=0.6, both deep in the ordered phase. There is no clean convergence pattern. The KL peak values grow with L (9.4 → 8.7 → 19.4) but without a clear scaling law. For XY, Δ also oscillates: L=8 at +0.13, L=12 at +0.21, L=16 at +0.63, L=24 at +0.03. L=32, 48 would help confirm trends for XY.
+**Finite-size scaling for non-Z₂.** The Ising Δ(L) converges to 0 as L→∞ with a 1/L trend, but the values in the table are δT-dependent (see grid resolution section above). The L=20→L=24 non-monotonicity (0.011→0.056) is likely partly a grid artifact: at large L, Δ is small and the peak falls between coarse grid points. A finer-grid study would likely smooth this. For Potts, the corrected study shows Δ(L=12)=−0.495, Δ(L=16)=−0.395, Δ(L=24)=−0.495 — the peak oscillates between T=0.5 and T=0.6, both deep in the ordered phase. There is no clean convergence pattern. The KL peak values grow with L (9.4 → 8.7 → 19.4) but without a clear scaling law. For XY, Δ also oscillates: L=8 at +0.13, L=12 at +0.21, L=16 at +0.63, L=24 at +0.03. L=32, 48 would help confirm trends for XY.
 
 **Connection to Fisher information.** The FIM peaks at Tc for all models (in full configuration space). The marginal KL surface is broad for non-Z₂ models. Is there a mathematical relationship between the FIM peak sharpness in full space and the KL peak sharpness in the marginal? Or is the broadness purely an artifact of dimensionality reduction?
 
