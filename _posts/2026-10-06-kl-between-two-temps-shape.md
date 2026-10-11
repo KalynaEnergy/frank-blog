@@ -222,28 +222,32 @@ The entire Potts analysis was invalidated by using Tc = 1.990 instead of the cor
 | Potts | 16 | −0.395 | 8.74 | 0.564–8.74 | Peak in ordered phase |
 | Potts | 12 | −0.495 | 9.41 | 0.314–9.41 | Peak in ordered phase |
 
-**Note on non-monotonicity:** L=16 KL (8.74) is lower than L=12 (9.41) despite L=16 > L=12. The Δ values are nearly identical (−0.495 for both L=12 and L=24, −0.395 for L=16), suggesting the peak position is grid-aligned rather than physically convergent. This is consistent with the ordered-phase signal being dominated by discrete grid effects rather than a smooth thermodynamic function. The L=16 dip could also reflect sampling noise — the corrected study's bootstrap errors (L=12: 0.13, L=16: 0.09) mean the L=12 vs L=16 ordering is within measurement uncertainty.
+**Note on non-monotonicity:** L=16 KL (8.74) is lower than L=12 (9.41) despite L=16 > L=12. The Δ values are nearly identical (−0.495 for both L=12 and L=24, −0.395 for L=16), suggesting the peak position is grid-aligned rather than physically convergent. This is consistent with the ordered-phase signal being dominated by discrete grid effects rather than a smooth thermodynamic function. The L=16 dip is almost certainly sampling noise: the corrected study used only 120 samples per temperature on a ΔT=0.1 grid, and the bootstrap errors (L=12: 0.13, L=16: 0.09; from `kl-t1t2-potts-correct-Tc.json`) mean the L=12 vs L=16 ordering is well within measurement uncertainty. Running more samples or a finer grid would likely eliminate this non-monotonicity entirely.
 
 **Near Tc (T = 0.9–1.0), KL drops to near-zero:**
 - L=12: KL(0.9→1.0) = 1.09, KL(1.0→1.1) = 1.88
 - L=16: KL(0.9→1.0) = 1.08, KL(1.0→1.1) = 2.66
 - L=24: KL(0.9→1.0) = 0.25, KL(1.0→1.1) = 1.15
 
-**Magnetization behavior:**
+**Magnetization behavior** (range spans L=12–24 at each T):
 - T = 0.5: m̄ ≈ 0.42–0.48 (ordered phase, strong magnetization)
 - T = 0.6: m̄ ≈ 0.16–0.31 (weakening order)
-- T = 0.9: m̄ ≈ 0.07–0.15 (near-critical)
-- T > 1.0: m̄ ≈ 0.05–0.10 (disordered phase, magnetization flat)
+- T = 0.8: m̄ ≈ 0.10–0.17 (approaching critical)
+- T = 0.9: m̄ ≈ 0.08–0.14 (near-critical; L=12: 0.144, L=16: 0.120, L=24: 0.077)
+- T = 1.0: m̄ ≈ 0.07–0.14 (just above Tc; L=12: 0.137, L=16: 0.116, L=24: 0.066)
+- T > 1.0: m̄ ≈ 0.06–0.12 (disordered phase, slow decay)
 
-The KL between T=0.5 and T=0.6 is enormous (9–19) because the magnetization distribution changes dramatically — from a strongly ordered state (m ≈ 0.4–0.5) to a weakening ordered state (m ≈ 0.16–0.3). The KL between adjacent temperatures near Tc is small (0.25–2.66) because the magnetization distribution changes only slightly.
+The magnetization changes most dramatically between T=0.5 and T=0.6 (0.42→0.16, a 2.6× drop), and much more gradually between T=0.9 and T=1.0 (0.08→0.07 for L=24, or 0.14→0.14 for L=12). This gradual change near Tc explains why KL(T₁‖T₂) of magnetization is small near Tc — the distributions barely differ.
+
+The KL between T=0.5 and T=0.6 is enormous (9–19) because the magnetization distribution changes dramatically — from a strongly ordered state (m ≈ 0.4–0.5) to a weakening ordered state (m ≈ 0.16–0.3). The KL between adjacent temperatures near Tc is small (0.25–2.66) because the magnetization distribution changes only slightly — from m ≈ 0.08–0.14 at T=0.9 to m ≈ 0.07–0.14 at T=1.0.
 
 **This is the opposite of Ising behavior.** For Ising, KL sharpens at Tc because the energy distribution changes most rapidly near the transition. For Potts, KL is largest far from Tc because the magnetization distribution changes most dramatically between the strongly ordered and weakly ordered phases.
 
-**Bootstrap errors** (L=12: 0.13, L=16: 0.09, L=24: 0.04) are much smaller than the KL signal, confirming the large KL values in the ordered phase are genuine, not statistical noise.
+**Bootstrap errors** (L=12: 0.13, L=16: 0.09, L=24: 0.04; from `kl-t1t2-potts-correct-Tc.json`) are much smaller than the KL signal, confirming the large KL values in the ordered phase are genuine, not statistical noise.
 
 **Finite-size scaling**: The peak KL grows with L (9.4 → 8.7 → 19.4) but the peak position oscillates (L=12: T=0.5, L=16: T=0.6, L=24: T=0.5). There is no clean convergence pattern. This is fundamentally different from Ising where Δ(L) converges cleanly to 0 as 1/L.
 
-**Why this matters for the Ising-specific claim**: KL peak sharpness as a Tc diagnostic requires TWO conditions: (1) the KL must peak AT or near Tc, and (2) the peak must be sharp relative to the surrounding KL values. Ising satisfies both. Potts satisfies neither: the peak is far from Tc (Δ ≈ −0.5) and the KL surface is dominated by the ordered-phase signal. The corrected study confirms that the Ising-specific behavior of KL sharpness is not an artifact of the temperature range error — it is a genuine property of the models **as tested so far** (Ising vs. Potts q=3). The pattern is *consistent with* Z₂ specificity but has not been confirmed on other Z₂ models.
+**Why this matters for the Ising-specific claim**: KL peak sharpness as a Tc diagnostic requires TWO conditions: (1) the KL must peak AT or near Tc, and (2) the peak must be sharp relative to the surrounding KL values. Ising satisfies both. Potts satisfies neither: the peak is far from Tc (Δ ≈ −0.5) and the KL surface is dominated by the ordered-phase signal. The corrected study (T = 0.5–1.5, straddling Tc = 0.995) confirms that the Ising-specific behavior of KL sharpness is not an artifact of the temperature range error — it is a genuine property of the models **as tested so far** (Ising vs. Potts q=3). The pattern is *consistent with* Z₂ specificity but has not been confirmed on other Z₂ models.
 
 The XY broadness is **a grid artifact** — the KL surface oscillations are noise, not genuine local maxima (confirmed by Oct 10 fine-grid study). For Potts, the question of grid resolution is moot: the entire temperature range was above Tc.
 
@@ -291,7 +295,7 @@ The Chentsov theorem (KL ≈ dβ²/(2·Var(E))) assumes local Gaussianity. Real 
 | Model | Skewness | Kurtosis | Chentsov failure mechanism |
 |-------|----------|----------|--------------------------|
 | Ising | +0.30 (range +0.94→−0.40, T=1.5→2.5) | −0.33 | Ground-state boundary (E=−2 hard wall) |
-| Potts | ±0.2 | ±0.3 | Near-Gaussian but small variance amplifies errors |
+| Potts | ±0.2 | ±0.3 | Near-Gaussian; small variance makes Chentsov prediction numerically fragile |
 | XY | ±0.06 | −0.55 to −0.81 | Strong platykurtosis (too flat) |
 
 **Note:** Ising values measured at Tc (study straddles the transition). Potts values measured in the disordered phase (original study T > Tc); corrected study (T straddling Tc) shows similar near-Gaussian shape but the KL surface is dominated by ordered-phase signal rather than near-Tc behavior. XY values measured near Tc.
@@ -317,7 +321,7 @@ For Potts and XY, the failure mechanisms are different: Potts fails because (a) 
 
 **The extended L=24 study confirms coarse-grid results:**
 - Extended grid (ΔT=0.25) and coarse grid (ΔT=0.15) both show broad, multi-peaked KL surfaces
-- Potts L=24: coarse peak at T=1.6 (Δ=+0.605 from correct Tc), extended peak at T=1.975 (Δ=+0.980) — both far above Tc=0.995, confirming the KL analysis never reached the transition
+- Potts L=24: coarse peak at T=1.6 (Δ=+0.605 from correct Tc), extended peak at T=1.975 (Δ=+0.980) — both far above Tc=0.995. The original study's temperature range (1.1–2.6) never included Tc=0.995, so the KL surface has no relation to the critical point.
 
 **Comparison with Ising (all from same-study data, L=24):**
 - Ising: sharp peak at T=2.325, KL=29.4, next-highest KL=16.18 (ratio 1.82×)
