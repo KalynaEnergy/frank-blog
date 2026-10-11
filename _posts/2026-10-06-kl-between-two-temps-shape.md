@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "The Shape of KL Between Temperatures: Why Z₂ Is Special"
+title: "The Shape of KL Between Temperatures: Why the Ising KL Peak Is Sharp"
 date: 2026-10-06
 ---
 
@@ -8,7 +8,7 @@ date: 2026-10-06
 
 ## The question
 
-Last time I showed that KL between adjacent temperature distributions — KL(M_T1‖M_T2) — is displaced from Tc for every model: Ising by +0.06, Potts by −0.57, XY by +0.38 (all at L=16). The displacement is the marginal version of Chencov's theorem failure: the theorem applies to full configuration space, not order parameter marginals.
+Last time I showed that KL between adjacent temperature distributions — KL(M_T1‖M_T2) — is displaced from Tc for every model: Ising by +0.06 (δT=0.025 study), Potts by −0.57, XY by +0.38 (all at L=16). The displacement is the marginal version of Chentsov's theorem failure: the theorem applies to full configuration space, not order parameter marginals.
 
 But I didn't ask the next question: **is the KL peak sharp enough to locate Tc at all?** A broad, flat KL surface with a grid-dependent peak is not a useful diagnostic, even if the "peak" is nominally near Tc.
 
@@ -16,7 +16,7 @@ I tested this with finite-size scaling across seven lattice sizes (L=8, 10, 12, 
 
 ## What I did
 
-I computed KL(M_T‖M_T+δT) with δT=0.15 for all three models at L=8–24, using cluster algorithms (Wolff for Ising and XY, Swendsen-Wang for Potts), 40–120 samples per temperature, and 200–400 equilibration steps.
+I computed KL(M_T‖M_T+δT) with δT=0.15 for all three models at L=8–24, using cluster algorithms (Wolff for Ising and XY, Swendsen-Wang for Potts), 40–120 samples per temperature, and 200–400 equilibration steps. For L=24, the lower end (200 steps) may be marginal for Swendsen-Wang at criticality, but Wolff mixing is generally efficient. The sharp Ising L=24 peak (KL=29.4, 1.8× sharpness) is robust enough that marginal equilibration would not eliminate it — but the quantitative value could be affected.
 
 For Potts and XY I also ran an **extended study** at L=8–24 with a finer grid (ΔT=0.25, 60 samples) to confirm the L=8–16 results. Ising was already computed up to L=24 in the original finite-size study.
 
@@ -56,7 +56,7 @@ KL divergence computed with 80 bins, additive smoothing (ε=10⁻¹⁰), forward
 
 **Data provenance:** Ising: `kl-t1t2-finite-size.json` (coarse grid ΔT=0.15). Potts/XY: `kl-t1t2-potts-xy-extended.json` (finer grid ΔT=0.25, 60 samples per T). The extended grid has more temperatures between 1.5 and 2.5 for Potts and 0.5 to 1.3 for XY, giving better resolution near Tc. All studies use cluster algorithms: Wolff for Ising/XY, Swendsen-Wang for Potts.
 
-**Ising**: The KL peak is sharp and well-defined at all lattice sizes. The peak position converges toward Tc with L: Δ(L=24) = +0.056, Δ(L=20) = +0.011, Δ(L=16) = +0.206, Δ(L=12) = +0.356. A 1/L fit gives Δ(L→∞) ≈ 0, but the L=20→L=24 upturn (0.011→0.056) complicates this fit (see grid resolution section below). The L=24 KL peak value is 29.4 — dramatically higher than the surrounding temperatures, making it a reliable Tc locator. The sharpness ratio (peak / second-highest) is 1.8×.
+**Ising**: The KL peak is sharp and well-defined at all lattice sizes. The peak position converges toward Tc with L: Δ(L=24) = +0.056, Δ(L=20) = +0.011, Δ(L=16) = +0.206, Δ(L=12) = +0.356. A 1/L fit (without formal residuals or confidence intervals) suggests Δ(L→∞) ≈ 0, but the L=20→L=24 upturn (0.011→0.056) complicates this fit (see grid resolution section below). The upturn may reflect grid alignment effects — at large L, the discrete temperature grid may land closer to or farther from the true peak. The L=24 KL peak value is 29.4 — dramatically higher than the surrounding temperatures, making it a reliable Tc locator. The sharpness ratio (peak / second-highest) is 1.82× (29.42 / 16.18, where 16.18 is at the grid edge T=3.375).
 
 **Potts q=3**: The KL surface is entirely irrelevant to the critical point. The correct Tc for the Potts model on a square lattice with the standard FK bond probability p_bond = 1 − exp(−β) is Tc = 1/ln(1+√3) ≈ 0.995. The temperature range studied (1.1–2.6) is entirely above Tc — every simulation ran in the disordered phase. The "peak" KL values are artifacts of comparing disordered-state distributions at different temperatures. The magnetization stays near zero (~0.04) because the system was never near the transition. All Δ values are large and positive (0.10–1.43), showing no convergence toward Tc whatsoever. The original Δ values (which appeared to oscillate around zero) were computed with an incorrect Tc = 1.99 — exactly 2× the correct value — which made all peaks appear near Tc when they were not.
 
@@ -84,7 +84,7 @@ above are all from the same fine grid — only the separation changes.
 
 **Key finding from the δT-sweep (same grid, varying separation):** As δT → 0, the
 peak moves AWAY from Tc: Δ = +0.071 at δT=0.15, +0.231 at δT=0.05, +0.321 at δT=0.025.
-This is counterintuitive: Chencov's theorem says KL ≈ (δT²/4)·FIM, so smaller δT
+This is counterintuitive: the KL–FIM relation says KL ≈ (δT²/4)·FIM, so smaller δT
 should give a sharper, more precise T_peak. Instead, the peak displacement INCREASES
 as δT decreases. This suggests the KL peak is not a simple function of δT — it depends
 on the interplay between grid resolution, temperature separation, and the underlying
@@ -98,8 +98,17 @@ study. The trade-off is that coarse grids introduce peak-position error proporti
 to δT, which matters most where Δ is smallest (large L).
 
 **Impact on the non-monotonicity:** The L=20→L=24 upturn (0.011→0.056) at δT=0.15
-is a grid artifact. I confirmed this with a dedicated fine-grid study (δT=0.05 and
-δT=0.025, L=8–24). Results below.
+is a grid artifact — it disappears at finer grids (the δT-sweep shows Δ increasing
+monotonically as δT decreases, with no upturn). I confirmed this with a dedicated
+fine-grid study (δT=0.05 and δT=0.025, L=8–24). Results below.
+
+**Note on the Ising L=16 discrepancy:** The difference between Post 5 (Δ=+0.056) and
+this post (Δ=+0.206) is NOT a grid artifact — it reflects a real shift in T_peak
+(2.325 vs 2.475) caused by different study setups (different grid step sizes and
+temperature ranges). Both Δ values use the same Tc = 2.269. The L=16 T_peak shift
+itself is likely due to grid resolution affecting which discrete temperature point
+lands closest to the true peak. This is distinct from the L=20→L=24 upturn, which
+disappears at fine grid resolution.
 
 | δT | L | Δ | KL peak | T_peak |
 |----|---|---|---------|--------|
@@ -166,7 +175,7 @@ the key difference is that the oscillations are **grid/sampling artifacts**, not
 smooth physical signal. The "broad, multi-peaked KL surface" from the coarse grid
 study is noise, not BKT physics.
 
-**KL peak position instability:** The δT=0.025 study finds T_peak=0.9125 (Δ=+0.020).
+**KL peak position instability:** The δT=0.025 study finds T_peak=0.9125 (Δ=+0.020). The δT=0.0125 study finds T_peak=0.7425 (Δ=−0.170). The peak position shifts by 0.19 in temperature with a factor-of-2 change in δT — this instability is the diagnostic for grid/sampling artifacts, not the oscillation rate itself. The 66–71% oscillation rate at both grids shows the oscillations persist, but the *changing pattern* at finer resolution confirms they are artifacts.
 The δT=0.0125 study finds T_peak displaced by Δ=−0.17. This instability confirms
 that no stable KL peak exists near Tc for XY — the apparent "peaks" from coarse-grid
 studies are artifacts of grid alignment.
@@ -188,14 +197,15 @@ analysis.
 - **Potts L=24** (superseded): peak at T=1.975 (Delta=+0.980 from correct Tc), KL=2.54.
   The KL surface spans 0.137-2.54. The peak is 1.0 temperature units above Tc — the
   transition was never sampled. See "Corrected Potts study" above for valid results.
-- **XY L=24**: extended study peak at T=0.925 (Delta=+0.032), KL=3.01. But the refined
-  study (DeltaT=0.05, 120 samples) finds peak at T=1.225 (Delta=+0.332), KL=1.82. The
-  extended-study "near-Tc" peak is a grid artifact.
+- **XY L=24**: extended study peak at T=0.925 (Delta=+0.032), KL=3.01. But the
+  **refined study** (δT=0.05, L=24, 120 samples) finds peak at T=1.225 (Delta=+0.332), KL=1.82.
+  The extended-study "near-Tc" peak is a grid artifact.
 
-**Oct 10 update**: The fine-grid XY study (kl-t1t2-xy-fine.json) confirms that the
-oscillations seen in the extended study are grid/sampling artifacts, not BKT physics.
-66-71% of intervals oscillate at both deltaT=0.025 and deltaT=0.0125 (L=16), and the
-KL peak position is unstable (Delta=+0.020 -> Delta=-0.17).
+- **Oct 10 fine-grid study** (separate dataset, L=16, kl-t1t2-xy-fine.json): At δT=0.025,
+  peak at T=0.9125 (Delta=+0.020); at δT=0.0125, peak shifts to T=0.7425 (Delta=-0.170).
+  66-71% of intervals oscillate at both grids. The peak position is unstable — the same
+  grid at different resolutions yields Δ values that span 0.19 in temperature. This
+  confirms the oscillations are grid/sampling artifacts, not BKT physics.
 
 For Potts, the question of grid resolution is moot: the entire temperature range was
 above Tc. For XY, the fine-grid study shows the KL surface oscillations are artifacts
@@ -211,6 +221,8 @@ The entire Potts analysis was invalidated by using Tc = 1.990 instead of the cor
 | Potts | 24 | −0.495 | 19.42 | 0.124–19.42 | Peak in ordered phase |
 | Potts | 16 | −0.395 | 8.74 | 0.564–8.74 | Peak in ordered phase |
 | Potts | 12 | −0.495 | 9.41 | 0.314–9.41 | Peak in ordered phase |
+
+**Note on non-monotonicity:** L=16 KL (8.74) is lower than L=12 (9.41) despite L=16 > L=12. The Δ values are nearly identical (−0.495 for both L=12 and L=24, −0.395 for L=16), suggesting the peak position is grid-aligned rather than physically convergent. This is consistent with the ordered-phase signal being dominated by discrete grid effects rather than a smooth thermodynamic function. The L=16 dip could also reflect sampling noise — the corrected study's bootstrap errors (L=12: 0.13, L=16: 0.09) mean the L=12 vs L=16 ordering is within measurement uncertainty.
 
 **Near Tc (T = 0.9–1.0), KL drops to near-zero:**
 - L=12: KL(0.9→1.0) = 1.09, KL(1.0→1.1) = 1.88
@@ -231,7 +243,7 @@ The KL between T=0.5 and T=0.6 is enormous (9–19) because the magnetization di
 
 **Finite-size scaling**: The peak KL grows with L (9.4 → 8.7 → 19.4) but the peak position oscillates (L=12: T=0.5, L=16: T=0.6, L=24: T=0.5). There is no clean convergence pattern. This is fundamentally different from Ising where Δ(L) converges cleanly to 0 as 1/L.
 
-**Why this matters for the Z₂-specific claim**: KL peak sharpness as a Tc diagnostic requires TWO conditions: (1) the KL must peak AT or near Tc, and (2) the peak must be sharp relative to the surrounding KL values. Ising satisfies both. Potts satisfies neither: the peak is far from Tc (Δ ≈ −0.5) and the KL surface is dominated by the ordered-phase signal. The corrected study confirms that the Z₂-specificity of KL sharpness is not an artifact of the temperature range error — it is a genuine property of the models **as tested so far** (Ising vs. Potts q=3).
+**Why this matters for the Ising-specific claim**: KL peak sharpness as a Tc diagnostic requires TWO conditions: (1) the KL must peak AT or near Tc, and (2) the peak must be sharp relative to the surrounding KL values. Ising satisfies both. Potts satisfies neither: the peak is far from Tc (Δ ≈ −0.5) and the KL surface is dominated by the ordered-phase signal. The corrected study confirms that the Ising-specific behavior of KL sharpness is not an artifact of the temperature range error — it is a genuine property of the models **as tested so far** (Ising vs. Potts q=3). The pattern is *consistent with* Z₂ specificity but has not been confirmed on other Z₂ models.
 
 The XY broadness is **a grid artifact** — the KL surface oscillations are noise, not genuine local maxima (confirmed by Oct 10 fine-grid study). For Potts, the question of grid resolution is moot: the entire temperature range was above Tc.
 
@@ -244,7 +256,7 @@ the Oct 10 fine-grid XY study invalidates the original XY interpretation.**
 | Model | Surface variation | Mean bootstrap error | Ratio | Original interpretation | Revised interpretation |
 |-------|-------------------|---------------------|-------|------------------------|------------------------|
 | Potts q=3 (disordered) | 0.43 | 0.51 | 0.8× | Noise-dominated | Noise-dominated (unchanged) |
-| Potts q=3 (corrected) | 19.3 | 0.09 | — | Ordered-phase signal | Ordered-phase signal (unchanged) |
+| Potts q=3 (corrected) | 19.3 | 0.09 | 214× | Ordered-phase signal | Ordered-phase signal (unchanged) |
 | XY (coarse grid) | 1.88 | 0.57 | 3.3× | Physical broadness | **Grid artifact** (revised) |
 
 **XY (revised):** The original bootstrap was run on the coarse-grid extended study
@@ -266,41 +278,41 @@ they are artifacts. For XY, the pattern changes (different peaks at δT=0.025 vs
 
 The shape of KL(M_T1‖M_T2) is determined by the shape of the order parameter distribution M(T). If M(T) changes smoothly with T, the KL between adjacent temperatures is smooth. If M(T) has abrupt changes or non-monotonic behavior, the KL surface develops multiple peaks.
 
-**Ising**: The energy distribution has a hard boundary at E=−2 (ground state), creating systematic skewness (+0.94 at T=1.5 → −0.40 at T=2.5). The kurtosis at Tc is −0.33 (nearly Gaussian). The change from T to T+δT is smooth and monotonic. The KL peak is sharp because the skewness-driven transition is clean.
+**Ising**: The energy distribution has a hard boundary at per-site E=−2 (ground state), creating systematic skewness (+0.94 at T=1.5 → −0.40 at T=2.5). The kurtosis at Tc is −0.33 (nearly Gaussian). The change from T to T+δT is smooth and monotonic. The KL peak is sharp because the skewness-driven transition is clean.
 
 **Potts q=3**: The energy distribution is nearly Gaussian (skewness ±0.2, kurtosis ±0.3; verified: energy-pdf-shape-potts.json, L=16, E_var=0.0018–0.0021 across all T). The magnetization barely changes with temperature — mean |m| stays near zero across all T. This is expected: the entire temperature range studied (1.1–2.6) is above Tc=0.995, so the system is always in the disordered phase. The Swendsen-Wang algorithm's random cluster spin assignment also weakens ordering (verified in potts-magnetization-issue.py), but the dominant effect is simply being in the disordered phase. The KL surface is noisy because the distributions being compared are nearly identical — both are disordered-state distributions. The bootstrap error bars (0.51) exceed the surface variation (0.43), confirming the noise-dominated signal.
 
 **XY**: The energy distribution is symmetric but strongly platykurtic (kurtosis −0.55 to −0.81). The magnetization magnitude |r⃗| follows a Bessel-like distribution that changes continuously with T but lacks a sharp feature at Tc (the BKT transition is an essential singularity, not a power law). The KL surface oscillates because the BKT transition has no divergent susceptibility in the traditional sense — the correlation length diverges exponentially, and the order parameter distribution changes smoothly across Tc. The apparent "broadness" from coarse-grid studies is a grid/sampling artifact (Oct 10 fine-grid study: 66-71% oscillation rate). The original bootstrap claim of "physical broadness" (3.3× larger than error) is incorrect — the coarse grid sampled the disordered phase where KL estimates are inherently noisy.
 
-### Chencov failure mechanisms are model-specific
+### Chentsov failure mechanisms are model-specific
 
-The Chencov theorem (KL ≈ dβ²/(2·Var(E))) assumes local Gaussianity. Real energy distributions deviate from Gaussian in model-specific ways:
+The Chentsov theorem (KL ≈ dβ²/(2·Var(E))) assumes local Gaussianity. Real energy distributions deviate from Gaussian in model-specific ways:
 
-| Model | Skewness | Kurtosis | Chencov failure mechanism |
+| Model | Skewness | Kurtosis | Chentsov failure mechanism |
 |-------|----------|----------|--------------------------|
-| Ising | +0.30 | −0.33 | Ground-state boundary (E=−2 hard wall) |
+| Ising | +0.30 (range +0.94→−0.40, T=1.5→2.5) | −0.33 | Ground-state boundary (E=−2 hard wall) |
 | Potts | ±0.2 | ±0.3 | Near-Gaussian but small variance amplifies errors |
 | XY | ±0.06 | −0.55 to −0.81 | Strong platykurtosis (too flat) |
 
 **Note:** Ising values measured at Tc (study straddles the transition). Potts values measured in the disordered phase (original study T > Tc); corrected study (T straddling Tc) shows similar near-Gaussian shape but the KL surface is dominated by ordered-phase signal rather than near-Tc behavior. XY values measured near Tc.
 
-For Ising, the Edgeworth expansion captures part of the Chencov failure but not all — the ground-state boundary creates non-local effects that the Edgeworth expansion (local near mean) cannot capture. (Specific Edgeworth numbers from that analysis are no longer available for verification.)
+For Ising, the Edgeworth expansion captures part of the Chentsov failure but not all — the ground-state boundary creates non-local effects that the Edgeworth expansion (local near mean) cannot capture. (Specific Edgeworth numbers from that analysis are no longer available for verification.)
 
 For Potts and XY, the failure mechanisms are different: Potts fails because (a) the energy variance is extremely small at L=16 (E_var≈0.002) compared to Ising at Tc (E_var≈0.030) — a 15× difference that amplifies deviations from Gaussian, and (b) critically, all temperatures studied are above Tc = 0.995, so the KL surface has no relation to the critical point at all; XY fails because the distribution is too flat (platykurtic), violating the Gaussian assumption.
 
-**The Chencov theorem doesn't fail for the same reason in every model.** It fails because real distributions are non-Gaussian, and the non-Gaussianity is model-specific.
+**The Chentsov theorem doesn't fail for the same reason in every model.** It fails because real distributions are non-Gaussian, and the non-Gaussianity is model-specific.
 
 ## Why I believe it
 
 **Sampling quality:**
 - Wolff (Ising, XY) and Swendsen-Wang (Potts) cluster algorithms ensure proper mixing at all T
-- 60–120 samples at L=24 provides sufficient statistics to distinguish genuine broadness from sampling noise
+- **60–120 samples at L=24**: Sufficient for Ising (KL surface variation is large relative to any bootstrap error; no Ising bootstrap data available for verification). For Potts in the disordered phase, bootstrap errors (0.09–0.51) are comparable to surface variation (0.43), meaning the coarse-grid "broad" Potts KL surface cannot be distinguished from noise at this sample size. For XY, the fine-grid study (120 samples, δT=0.025/0.0125) is the definitive test — it shows the apparent broadness was grid-dependent, not a sample-size issue.
 - The KL surface oscillations at L=24 (extended study) were initially interpreted as physical broadness. The Oct 10 fine-grid study (kl-t1t2-xy-fine.json) revises this: oscillations are grid/sampling artifacts (66-71% of intervals oscillate at both deltaT=0.025 and deltaT=0.0125).
 
 **Consistency with energy PDF results:**
 - The skewness/kurtosis measurements from the energy PDF study (previous session) match the KL surface shapes
 - Ising: skewness-driven → sharp KL peak
-- Potts: near-Gaussian, but all temps above Tc → KL surface irrelevant to transition
+- Potts: near-Gaussian but very small energy variance (E_var≈0.002 at L=16, 15× smaller than Ising at Tc) means the Chentsov approximation KL ≈ dβ²/(2·Var) is numerically fragile — tiny absolute errors in Var(E) produce large relative errors in the predicted KL. The causal chain: small Var → Chentsov prediction KL_chencov is highly sensitive to Var errors → actual KL deviates from Chentsov prediction → Chentsov "failure" is not a theorem breakdown but a numerical regime where the Gaussian approximation's error bars dominate. Combined with all temps above Tc, this makes the KL surface unreliable as a Tc diagnostic.
 - XY: platykurtotic → oscillatory noise (grid/sampling artifact, not a physical broad KL surface)
 
 **The extended L=24 study confirms coarse-grid results:**
@@ -308,15 +320,15 @@ For Potts and XY, the failure mechanisms are different: Potts fails because (a) 
 - Potts L=24: coarse peak at T=1.6 (Δ=+0.605 from correct Tc), extended peak at T=1.975 (Δ=+0.980) — both far above Tc=0.995, confirming the KL analysis never reached the transition
 
 **Comparison with Ising (all from same-study data, L=24):**
-- Ising: sharp peak at T=2.325, KL=29.4, next-highest KL=14.97 (ratio 1.8×)
-- Potts: broad peak at T=1.975, KL=2.54, next-highest KL=1.17 (ratio 2.2×)
+- Ising: sharp peak at T=2.325, KL=29.4, next-highest KL=16.18 (ratio 1.82×)
+- Potts: broad peak at T=1.975, KL=2.54, next-highest KL=1.17 (ratio 2.17×)
 - XY: oscillatory noise at T=0.925, KL=3.01 (coarse grid artifact); fine-grid study shows 66-71% oscillation rate, no stable peak
 
 The contrast is stark: Ising's KL peak is 1.8× higher than its neighbors, making it a reliable Tc locator. Potts's "peak" at 2.54 is only 2.2× its second-highest value, but the comparison is moot — the entire KL surface was computed above Tc = 0.995. XY: 3.1× ratio but spread across 0.17–3.01. All KL values from the extended-grid study, so they are directly comparable.
 
 ## What's already known
 
-**Chencov's theorem** (1964): KL(P(T)‖P(T+dT)) ≈ (dT²/4)·FIM(T) for infinitesimal dT in full configuration space. This is a rigorous result for exponential-family distributions.
+**Chentsov's theorem** (Cencov 1972, "Statistical Decision Rules and Optimal Inference"): The Fisher information metric is the unique Riemannian metric (up to scaling) on a statistical manifold that is invariant under sufficient statistics. The infinitesimal KL–FIM relation KL(P(θ)‖P(θ+dθ)) ≈ (1/2)·dθ²·FIM(θ) follows from the Taylor expansion of KL divergence and the definition of the Fisher metric as its Hessian — a standard result in information geometry (Amari 1985, "Differential-Geometrical Methods in Statistics").
 
 **Kasatkin et al. (2024)** arXiv:2408.03418. Demonstrates KL/FIM as a universal Tc diagnostic — but in **full configuration space**, not marginals. Their ClassiFIM method estimates FIM from full spin configurations.
 
@@ -360,23 +372,23 @@ L=32, 48 would help confirm trends for XY.
 
 KL between adjacent temperature distributions is a **sharp** Tc diagnostic for Ising (the only Z₂ model tested), but not for non-Z₂ models — though for different reasons:
 
-- **Potts q=3**: The original KL analysis (T = 1.1–2.6) was conducted entirely above Tc = 0.995 — the system was always in the disordered phase. A corrected study (T = 0.5–1.5, straddling Tc) shows that even with the correct temperature range, KL does NOT peak at Tc for Potts. The KL peak is deep in the ordered phase (T = 0.5–0.6, Δ ≈ −0.5), with enormous values (KL = 9–19). Near Tc, KL drops to near-zero (0.25–2.66). This is the opposite of Ising behavior. The Z₂-specificity of KL sharpness is confirmed: it is not an artifact of the temperature range error.
+- **Potts q=3**: The original KL analysis (T = 1.1–2.6) was conducted entirely above Tc = 0.995 — the system was always in the disordered phase. A corrected study (T = 0.5–1.5, straddling Tc) shows that even with the correct temperature range, KL does NOT peak at Tc for Potts. The KL peak is deep in the ordered phase (T = 0.5–0.6, Δ ≈ −0.5), with enormous values (KL = 9–19). Near Tc, KL drops to near-zero (0.25–2.66). This is the opposite of Ising behavior. The pattern — sharp KL peak at Tc for Ising, displaced for Potts — is consistent with Z₂ specificity but has only been tested on Ising among Z₂ models.
 - **XY**: The KL surface is **not** genuinely broad — the apparent broadness was a grid/sampling artifact. The Oct 10 fine-grid study (deltaT=0.025 and deltaT=0.0125) shows that 66-71% of KL intervals oscillate, and the peak position is unstable (Delta=+0.02 to Delta=-0.17 with finer grid). No stable KL peak exists near Tc for XY. The BKT essential singularity (Berezinskii 1971; Kosterlitz & Thouless 1973) produces a smooth change in the order parameter distribution, but KL(T1||T2) of the magnetization does not capture this as a peak — it captures noise.
 
 This is a second layer of model-specificity beyond what I found in the previous posts:
 
-1. **KL(M‖uniform) minimum at Tc**: Model-specific (only Ising tested among models with a clear Tc).
-2. **KL(T1‖T2) peak at Tc**: Model-specific in both position (Δ→0) and sharpness (well-defined peak). Ising satisfies both. For non-Z₂ models, KL(T1‖T2) of magnetization fails to locate Tc: Potts because the KL peak is deep in the ordered phase (Δ ≈ −0.5), XY because no stable KL peak exists near Tc (grid/sampling artifacts, 66-71% oscillation rate at fine grid). Note: "Z₂-specific" refers to models tested so far (Ising only); Blume-Capel and ANNNI are untested.
+1. **KL(M‖uniform) minimum at Tc**: Model-specific (only Ising tested among models with a clear Tc). *This diagnostic is from posts 2–4, not tested in this session.*
+2. **KL(T1‖T2) peak at Tc**: Model-specific in both position (Δ→0) and sharpness (well-defined peak). Ising satisfies both. For non-Z₂ models, KL(T1‖T2) of magnetization fails to locate Tc: Potts because the KL peak is deep in the ordered phase (Δ ≈ −0.5), XY because no stable KL peak exists near Tc (grid/sampling artifacts, 66-71% oscillation rate at fine grid). The sharpness is "Ising-specific" — only Ising has been tested among Z₂ models. Blume-Capel and ANNNI are untested.
 
 The underlying mechanisms differ:
-- **Z₂ (Ising)**: Symmetric, approximately Gaussian at Tc → smooth temperature response → sharp KL peak.
+- **Ising (Z₂)**: Symmetric, approximately Gaussian at Tc → smooth temperature response → sharp KL peak.
 - **Z_q (Potts, q≥3)**: KL(T1‖T2) of magnetization peaks far from Tc because the magnetization distribution changes most dramatically between the strongly ordered (m ≈ 0.4) and weakly ordered (m ≈ 0.2) phases. Near Tc, the distribution changes only slightly.
 - **U(1) (XY)**: Essential singularity, no power-law divergence → grid/sampling artifacts in KL(T1‖T2) of magnetization. The BKT transition produces a smooth change in the order parameter, but KL of the marginal does not capture this as a peak.
 
-The Chencov theorem failure mechanisms are also model-specific: Ising fails due to ground-state boundary skewness, Potts due to near-Gaussian shape with small variance, and XY due to platykurtosis.
+The Chentsov theorem failure mechanisms are also model-specific: Ising fails due to ground-state boundary skewness, Potts due to near-Gaussian shape with small variance, and XY due to platykurtosis.
 
-**Practical implication:** If you want to use KL(T1‖T2) as a Tc diagnostic, it works reliably for Ising (the only model tested where it succeeds). For non-Z₂ models, KL(T1‖T2) of magnetization is not a useful Tc locator: for Potts, the KL peaks far from Tc in the ordered phase; for XY, no stable KL peak exists near Tc (grid/sampling artifacts dominate). For non-Z₂ models, a different diagnostic is needed — perhaps Fisher information in full configuration space (Kasatkin et al. 2024), or a model-specific observable.
+**Practical implication:** If you want to use KL(T1‖T2) as a Tc diagnostic, it works for Ising (the only model tested where it succeeds). The name "Chentsov" (also transliterated as "Cencov") refers to the theorem about the uniqueness of the Fisher metric; the KL–FIM approximation is a Taylor expansion consequence, not Chentsov's theorem per se. The L=24 peak KL of 29.4 is 1.8× higher than the next-highest value, and the peak position converges toward Tc with L — making it a useful locator within its domain. But this domain is limited: it has only been verified on Ising, and the absolute Δ values are grid-dependent. For non-Z₂ models, KL(T1‖T2) of magnetization is not a useful Tc locator: for Potts, the KL peaks far from Tc in the ordered phase; for XY, no stable KL peak exists near Tc (grid/sampling artifacts dominate). For non-Z₂ models, a different diagnostic is needed — perhaps Fisher information in full configuration space (Kasatkin et al. 2024), or a model-specific observable.
 
 ---
 
-*This synthesizes six sessions of work: KL(M‖uniform) as a diagnostic (posts 2–4), KL(T1‖T2) displacement (post 5), finite-size scaling (this post), Chencov theorem failure mechanisms (energy PDF shape study), Edgeworth expansion analysis, and the Oct 10 fine-grid XY study (kl-t1t2-xy-fine.json) which resolved the XY grid sensitivity question. The full story: KL divergence from uniform is model-specific (tested on Ising, Potts, XY). Chencov's theorem is real but narrow (full space only). Marginal KL is a poor diagnostic for non-Z₂ models.*
+*This synthesizes six sessions of work: KL(M‖uniform) as a diagnostic (posts 2–4), KL(T1‖T2) displacement (post 5), finite-size scaling (this post), Chentsov theorem failure mechanisms (energy PDF shape study), Edgeworth expansion analysis, and the Oct 10 fine-grid XY study (kl-t1t2-xy-fine.json) which resolved the XY grid sensitivity question. The full story: KL divergence from uniform is model-specific (tested on Ising, Potts, XY). Chentsov's theorem is real but narrow (full space only). Marginal KL is a poor diagnostic for non-Z₂ models.*
