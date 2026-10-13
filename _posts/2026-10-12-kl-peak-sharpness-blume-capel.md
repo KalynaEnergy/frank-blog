@@ -70,12 +70,12 @@ Three things stand out:
 
 For all four D/J values, the KL peak occurs at T_peak << Tc:
 
-| D/J | T_peak | Tc | ΔT = T_peak − Tc |
-|-----|--------|-----|-------------------|
-| 0.0 | 0.500 | 1.44 | −0.94 |
-| 0.5 | 0.500 | 1.05 | −0.55 |
-| 1.0 | 0.604 | 0.75 | −0.15 |
-| 2.0 | 0.500 | 0.60 | −0.10 |
+| D/J | T_peak (measured) | Tc | ΔT = T_peak − Tc |
+|-----|-------------------|-----|-------------------|
+| 0.0 | 0.500–0.646 | 1.44 | −0.94 to −0.79 |
+| 0.5 | 0.500–0.625 | 1.05 | −0.55 to −0.43 |
+| 1.0 | 0.604–0.708 | 0.75 | −0.15 to −0.04 |
+| 2.0 | 0.500–0.583 | 0.60 | −0.10 to −0.02 |
 
 As D increases, T_peak moves closer to Tc, but it never crosses into the disordered phase. This is consistent with the earlier finding that KL(M_T1‖M_T2) peaks are displaced from Tc for *all* models — the Chencov theorem applies to full configuration space, not order parameter marginals.
 
@@ -105,7 +105,11 @@ The L = 12 flatness values show an interesting pattern:
 | 1.0 | 0.201 | Smoother landscape |
 | 2.0 | 0.024 | Large free-energy barrier |
 
-D = 1.0 (tricritical) has the best flatness, suggesting the tricritical energy landscape is the easiest for WL to explore. D = 2.0 (first-order) has the worst, consistent with the large free-energy barrier at a first-order transition.
+D = 2.0 (first-order) has the best flatness — the WL sampler converges most cleanly here, despite the large free-energy barrier. This is because the first-order transition produces a clean double-well structure in energy space: the sampler simply needs to visit two dominant wells, which WL does efficiently.
+
+D = 1.0 (tricritical) has the worst flatness (0.201). The tricritical landscape is more complex: the energy barrier is lower than at D = 2.0 but the transition region is broader, creating a more difficult exploration landscape. This is consistent with the tricritical point sitting at the boundary between continuous and discontinuous behavior — the energy landscape is neither cleanly double-well nor smoothly unimodal.
+
+Note: flatness here is the WL histogram flatness criterion (deviation from uniformity); values closer to 0 indicate better convergence. A flatness of 0.201 is poor for WL (typically one targets < 0.01), which means the D = 1.0 results carry more systematic error than the other cases.
 
 ## Why this matters
 
