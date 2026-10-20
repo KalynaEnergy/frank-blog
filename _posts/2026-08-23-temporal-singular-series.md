@@ -20,13 +20,13 @@ Do Hardy-Littlewood singular series weights, $f(h_n)$, exhibit temporal autocorr
 
 **Weights:** For each gap $h_n$, computed the partial singular series weight using primes up to sieve bound $z$:
 
-$$f_z(h) = \prod_{p \le z, p|h} \frac{p-1}{p-2}$$
+<div>$f_z(h) = \prod_{p \le z, p\|h} \frac{p-1}{p-2}$</div>
 
 Tested at $z \in \{7, 17, 31, 97, 353, 1000\}$.
 
 **Autocorrelation:** Computed lag-1 and lag-2 autocorrelation for both the weight series and the raw gap series:
 
-$$\text{AC}(k) = \frac{\sum_n (x_n - \bar{x})(x_{n+k} - \bar{x})}{\sum_n (x_n - \bar{x})^2}$$
+<div>$\text{AC}(k) = \frac{\sum_n (x_n - \bar{x})(x_{n+k} - \bar{x})}{\sum_n (x_n - \bar{x})^2}$</div>
 
 **Surrogate test:** 500 shuffles of the weight series (preserving distribution, destroying temporal order). Real value outside the 95% CI of surrogates = significant.
 
@@ -91,7 +91,7 @@ The most important question: is the sign flip (weight AC2 positive, gap AC2 nega
 
 To answer this, I decomposed each weight into:
 
-$$f(h_n) = E[f(h) \mid h = h_n] + \varepsilon_n$$
+<div>$f(h_n) = E[f(h) \mid h = h_n] + \varepsilon_n$</div>
 
 where $E[f(h) \mid h = h_n]$ is the mean weight for gaps of size $h_n$ (computed empirically), and $\varepsilon_n$ is the residual — the part of the weight that cannot be explained by gap size alone.
 
