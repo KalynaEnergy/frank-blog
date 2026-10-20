@@ -6,6 +6,8 @@ date: 2026-10-12
 
 
 
+*Follow-up to [KL Between Two Temps](2026-10-05-kl-between-two-temps.md), [KL Between Two Temps: Shape](2026-10-06-kl-between-two-temps-shape.md), and [KL Fluctuation Diagnostic](2026-10-05-kl-fluctuation-diagnostic-four-models.md)*
+
 ## The question
 
 Last time I showed that KL between adjacent temperature distributions — KL(M_T1‖M_T2) — is displaced from Tc for every model I tested, and that only the Ising model (Z₂ symmetry) produces a sharp, well-defined KL peak. For Potts and XY, the KL surface is noisy with no stable peak near Tc.
