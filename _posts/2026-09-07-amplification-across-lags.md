@@ -25,15 +25,15 @@ is universal.
 For each lag *k* and modulus *m*, decompose the lag-*k* autocovariance into cross-class and
 same-class parts:
 
-$$AC_k = \sum_{r_1 \ne r_2} AC_k(r_1, r_2) + \sum_{r} AC_k(r, r)$$
+<div>$AC_k = \sum_{r_1 \ne r_2} AC_k(r_1, r_2) + \sum_{r} AC_k(r, r)$</div>
 
 Each pair contribution splits into class-mean bias and residual:
 
-$$AC_k(r_1, r_2) = \frac{n_{r_1,r_2}}{\text{Var}(g)} (\bar{g}_{r_1} - \mu)(\bar{g}_{r_2} - \mu) + \text{residual}_{r_1,r_2}$$
+<div>$AC_k(r_1, r_2) = \frac{n_{r_1,r_2}}{\text{Var}(g)} (\bar{g}_{r_1} - \mu)(\bar{g}_{r_2} - \mu) + \text{residual}_{r_1,r_2}$</div>
 
 The **amplification** is the ratio:
 
-$$A_k(m) = \left|\frac{\text{actual total}}{\text{bias total}}\right|$$
+<div>$A_k(m) = \left|\frac{\text{actual total}}{\text{bias total}}\right|$</div>
 
 If the class means alone fully explained the autocorrelation, *A* would be 1. If the residual
 dominates, *A* is large. The question is: how does *A* vary with *m*, and does the pattern
