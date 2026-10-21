@@ -17,6 +17,22 @@
     gtag('config', '{{ site.google_analytics }}');
   </script>
   {%- endif %}
+  <!-- Posts write inline math as $...$ and display math as $$...$$ (kramdown
+       emits \[...\] / \(...\) for those). Lone currency $ is left alone because
+       MathJax only typesets a matched pair. -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
   <header class="site-header">
