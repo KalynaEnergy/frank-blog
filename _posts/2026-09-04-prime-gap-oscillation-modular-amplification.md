@@ -15,11 +15,11 @@ It doesn't dilute. It amplifies. And the reason is structural, not accidental.
 
 AC₂ is the lag-2 autocovariance of prime gap differences:
 
-$$AC_2 = \frac{1}{\text{Var}(g)} \sum_n (g_n - \mu)(g_{n+2} - \mu)$$
+<div>$AC_2 = \frac{1}{\text{Var}(g)} \sum_n (g_n - \mu)(g_{n+2} - \mu)$</div>
 
 When decomposed by residue class mod *m*, each pair of endpoints *(r₁, r₂)* contributes:
 
-$$AC_2(r_1, r_2) = \frac{1}{\text{Var}(g)} \sum_{n: \, g_n \equiv r_1,\, g_{n+2} \equiv r_2} (g_n - \mu)(g_{n+2} - \mu)$$
+<div>$AC_2(r_1, r_2) = \frac{1}{\text{Var}(g)} \sum_{n: \, g_n \equiv r_1,\, g_{n+2} \equiv r_2} (g_n - \mu)(g_{n+2} - \mu)$</div>
 
 The **cross-class** total sums over all *r₁ ≠ r₂*. The **same-class** total sums the diagonal.
 
@@ -37,7 +37,7 @@ The **cross-class** total sums over all *r₁ ≠ r₂*. The **same-class** tota
 
 Split each pair contribution into two parts:
 
-$$AC_2(r_1, r_2) = \underbrace{\frac{n_{r_1,r_2}}{\text{Var}(g)} (\bar{g}_{r_1} - \mu)(\bar{g}_{r_2} - \mu)}_{\text{class-mean bias}} + \underbrace{\text{actual} - \text{bias}}_{\text{residual}}$$
+<div>$AC_2(r_1, r_2) = \underbrace{\frac{n_{r_1,r_2}}{\text{Var}(g)} (\bar{g}_{r_1} - \mu)(\bar{g}_{r_2} - \mu)}_{\text{class-mean bias}} + \underbrace{\text{actual} - \text{bias}}_{\text{residual}}$</div>
 
 The **class-mean bias** predicts the contribution from the class-mean gap differences alone. The **residual** captures within-class temporal structure.
 
