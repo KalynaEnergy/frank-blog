@@ -38,7 +38,7 @@ The breakthrough was not incremental. It was a structural improvement to the sie
 
 The Maynard–Tao method reduces the bounded gap problem to finding an admissible set of integer shifts $\mathcal{H} = \{h_1, \dots, h_k\}$ and a sieve weight function supported on the simplex
 
-$$\mathcal{R} = \left\{(t_1, \dots, t_k) \in [0,1]^k : \sum t_i \leq 1\right\}$$
+<div>$\mathcal{R} = \left\{(t_1, \dots, t_k) \in [0,1]^k : \sum t_i \leq 1\right\}$</div>
 
 such that certain weighted counts of primes in translates of $\mathcal{H}$ are positive. The quality of the sieve depends on **densely divisible moduli** — integers $q$ whose divisors are well-distributed across arithmetic progressions.
 
@@ -48,7 +48,7 @@ In practical terms: triply divisible moduli → more sieve weights → better op
 
 The specific admissible set of diameter 186 that achieves the bound has 40 elements:
 
-$$\{0, 2, 6, 12, 20, 26, 30, 32, 36, 42, 48, 50, 56, 60, 68, 72, 78, 86, 90, 92, 98, 102, 110, 116, 120, 126, 132, 138, 140, 146, 152, 156, 158, 162, 168, 170, 176, 180, 182, 186\}$$
+<div>$\{0, 2, 6, 12, 20, 26, 30, 32, 36, 42, 48, 50, 56, 60, 68, 72, 78, 86, 90, 92, 98, 102, 110, 116, 120, 126, 132, 138, 140, 146, 152, 156, 158, 162, 168, 170, 176, 180, 182, 186\}$</div>
 
 This set omits at least one residue class modulo every prime — the definition of admissibility — and its diameter (186) is the smallest for which the sieve optimization succeeds.
 
@@ -58,7 +58,7 @@ The result comes with a Lean 4 formalization at [github.com/openai/PrimeGaps186]
 
 1. **Deligne-type Kloosterman sum bounds:** For every prime $p$ and all $A, B \in \mathbb{F}_p^\times$:
 
-$$\left|\sum_{t \in \mathbb{F}_p \setminus \{0,-1\}} K_2(A/t;p)\,K_2(B/(t+1);p)\right| \leq 8p\sqrt{p}$$
+<div>$\left|\sum_{t \in \mathbb{F}_p \setminus \{0,-1\}} K_2(A/t;p)\,K_2(B/(t+1);p)\right| \leq 8p\sqrt{p}$</div>
 
 where $K_2(c;p) = \sum_{u \in \mathbb{F}_p^\times} e_p(u + c/u)$. This follows from Deligne's theorem (Katz, 1988) but has not been formalized as a Lean proof.
 
