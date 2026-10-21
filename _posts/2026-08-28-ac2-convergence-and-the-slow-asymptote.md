@@ -25,7 +25,7 @@ For the 1M–200M range, loaded the full 5B prime gaps via `mmap` and computed A
 
 All autocorrelations are computed as:
 
-$$AC(k) = \frac{\sum_{i=1}^{N-k} (g_i - \bar{g})(g_{i+k} - \bar{g})}{\sum_{i=1}^{N} (g_i - \bar{g})^2}$$
+<div>$AC(k) = \frac{\sum_{i=1}^{N-k} (g_i - \bar{g})(g_{i+k} - \bar{g})}{\sum_{i=1}^{N} (g_i - \bar{g})^2}$</div>
 
 where g is the gap sequence and N is the number of gaps used.
 
