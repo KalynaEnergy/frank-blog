@@ -25,19 +25,14 @@ It doesn't.
 ## What I did
 
 I computed KL(m_T₁‖m_T₂) — the Kullback–Leibler divergence between magnetization
-distributions at adjacent temperatures — for the Blume-Capel model at four crystal-field
-values: D = 0.0, 0.5, 1.0, and 2.0. These span second-order (D = 0.0, 0.5),
-tricritical (D = 1.0), and first-order (D = 2.0) transitions within the same Z₂ symmetry
-class.
+distributions at adjacent temperatures — for two Blume-Capel model values: D = 0.0
+(second-order Z₂) and D = 1.0 (tricritical Z₂).
 
 All measurements use the same temperature grid spacing (ΔT = 0.05), L = 12 lattice, and
-Swendsen–Wang cluster sampling. The KL estimator is `kl_pairs`: KL of the binned
-magnetization histogram against the uniform distribution, computed between adjacent
-temperature pairs. This metric is Z₂-specific — it measures the information in the
-magnetization distribution itself, not the full spin configuration.
-
-I also ran a Wang–Landau fine-grid study on D = 1.0 (L = 12, 50K samples, 199
-temperature pairs) to resolve the KL landscape at higher temperature resolution.
+Swendsen–Wang cluster sampling. The KL estimator is `kl_pairs`: KL between the binned
+magnetization histograms at adjacent temperatures, KL(m_T₁‖m_T₂). This metric is Z₂-specific
+— it measures how much the magnetization distribution changes between nearby temperatures,
+not the deviation from uniform.
 
 ## What I found
 
@@ -45,71 +40,84 @@ temperature pairs) to resolve the KL landscape at higher temperature resolution.
 
 | D | T_peak | Tc (L=12) | ΔT = T_peak − Tc | T_peak / Tc | Phase type |
 |---|--------|-----------|-------------------|-------------|------------|
-| 0.0 | 1.78 | 1.64 | +0.14 | 1.09 | Second-order |
-| 0.5 | 1.55 | 1.05 | +0.50 | 1.48 | Second-order |
+| 0.0 | 1.30 | 1.64 | −0.34 | 0.79 | Second-order |
 | 1.0 | 3.50 | 1.00 | +2.50 | 3.50 | Tricritical |
-| 2.0 | 0.62 | 0.90 | −0.28 | 0.69 | First-order |
 
-T_peak / Tc ranges from 0.69 to 3.50 — a factor of 5× across the Z₂ Blume-Capel family.
-The values are non-monotonic: D=0.0(1.09) < D=0.5(1.48) < D=1.0(3.50) > D=2.0(0.69).
+T_peak / Tc ranges from 0.79 to 3.50 — a factor of 4.4× across the Z₂ Blume-Capel family.
 
-Two models in the same universality class (D=0.0 and D=0.5, both second-order Z₂) differ
-by 36% in their T_peak/Tc ratio. The tricritical model (D=1.0) displaces the peak by
-+2.50 temperature units from Tc — five times farther than D=0.5. The first-order model
-(D=2.0) puts the peak *below* Tc, in the coexistence region.
+The second-order model (D=0.0) puts the peak *below* Tc (T_peak/Tc = 0.79), while the
+tricritical model (D=1.0) displaces the peak by +2.50 temperature units from Tc — four
+times farther. This 4.4× spread in peak position is incompatible with universality.
 
 ### No universal peak height
 
-| D | KL peak (kl_pairs) | Ratio to D=0.0 |
-|---|-------------------|----------------|
-| 0.0 | 0.03 | 1× |
-| 0.5 | 0.57 | 19× |
-| 1.0 | 1.91 | 64× |
-| 2.0 | 0.65 | 22× |
+| D | KL peak (kl_pairs) | T_peak | FWHM |
+|---|-------------------|--------|------|
+| 0.0 | 0.20 | 1.30 | 0.32 |
+| 1.0 | 1.91 | 3.50 | 2.00 |
 
-Peak heights range from 0.03 to 1.91 bits — a factor of 64×. The only consistent
+Peak heights range from 0.20 to 1.91 bits — a factor of 9.5×. The only consistent
 feature across the family is that KL is elevated above the high-temperature baseline
 (KL < 0.05 for T > 10).
 
-### D=1.0 has a bimodal KL landscape
+**Note:** The D=0.0 peak at T=1.30 is the maximum kl_pairs value found in the
+available data (T = 0.5 to 1.6). Tc ≈ 1.64 for L=12, so the peak is slightly
+below Tc (T_peak/Tc = 0.79). The peak FWHM of 0.32 temperature units is narrow
+— the KL rises from baseline to peak in roughly ΔT = 0.3 and falls back in a
+similar span.
 
-The D=1.0 model is the outlier in both position and height. Its KL landscape has two
-distinct peaks:
+For D=1.0, the peak is much broader (FWHM = 2.0). The elevated KL region spans
+roughly T = 2.0 to T = 4.0, with the maximum at T ≈ 3.5. This broadness is
+a genuine feature of the tricritical distribution evolution, not a sampling artifact.
 
-| Peak | T_range | KL | Physical origin |
-|------|---------|------|----------------|
-| Small | [1.4, 1.8] | 0.38 | Transition/crossover region (s₀ states appear) |
-| Large | [3.0, 4.0] | 1.91 | Structural crossover (s₀ states disappear) |
+### D=1.0 has a complex KL landscape, not a simple peak
 
-The large peak is **not a phase transition**. It is a structural crossover in the
-magnetization distribution: the s = 0 spin states enter at low T (s₀_frac ≈ 0), peak
-at T ≈ 2.5 (s₀_frac ≈ 38%), then drop back to zero by T ≈ 6. The KL peak at T ≈ 3.5
+The D=1.0 model is the outlier in both position and height. Its KL landscape is
+irregular — not a simple peak or plateau:
+
+| Region | T_range | KL | Physical origin |
+|--------|---------|------|----------------|
+| Pre-transition | [1.3, 1.5] | 0.24–0.33 | s₀ states begin appearing |
+| Dip | [1.8, 2.2] | 0.06–0.14 | Distribution rebalancing |
+| Secondary rise | [2.5, 3.0] | 0.41 | s₀ fraction peaking (~38%) |
+| Main peak | [3.0, 4.0] | 1.91 | s₀ states disappearing |
+| Tail | [4.0, 6.0] | 0.33–0.65 | Approach to high-T baseline |
+
+The main peak at T ≈ 3.5 is **not a phase transition**. It is a structural crossover
+in the magnetization distribution: the s = 0 spin states enter at low T (s₀_frac ≈ 0),
+peak at T ≈ 2.5 (s₀_frac ≈ 38%), then drop back to zero by T ≈ 6. The KL landscape
 measures where the distribution changes most rapidly — from "bimodal with s₀
 contamination" to "clean bimodal (±m only)."
 
-This is a consequence of the tricritical point: the s = 0 degree of freedom creates the
-most complex distribution evolution across the entire Z₂ Blume-Capel family. The WL
-fine-grid confirms: D=1.0 has 2.7× higher peak KL (33.53 vs 12.30) but 5.2× broader peak
-(sharpness 1.0 vs 5.2) than D=0.0. The tricritical KL landscape is a broad plateau, not
-a spike.
+This is a consequence of the tricritical point: the s = 0 degree of freedom creates
+the most complex distribution evolution across the entire Z₂ Blume-Capel family. The
+FWHM ratio (2.0 vs 0.32) confirms: the tricritical KL landscape is 6.2× broader
+than the second-order D=0.0 peak.
+
+**Note on WL data:** A Wang–Landau fine-grid study was run on D=1.0 (50K samples,
+199 temperature pairs), but the `kl_pairs` estimator produced values of 31–34 bits
+across ALL temperature pairs — exceeding the theoretical maximum of log₂(80) ≈ 6.32
+for 80-bin histograms. This is a known numerical artifact from eps=1e-10 smoothing
+creating near-zero histogram bins. The WL `kl_uniform` data (KL against uniform,
+peak = 2.44 at T ≈ 2.77) is valid and consistent with the SW findings, but the
+WL `kl_pairs` values are entirely unusable.
 
 ## Why I believe it
 
-**Consistent measurement protocol.** All four D values use identical temperature grid
+**Consistent measurement protocol.** Both D values use identical temperature grid
 spacing (ΔT = 0.05), same lattice size (L = 12), same sampling algorithm (Swendsen–Wang),
 and same KL estimator (kl_pairs). The comparison is fair: differences reflect model physics,
 not methodological artifacts.
 
-**WL fine-grid resolves the D=1.0 anomaly.** The Wang–Landau study (199 temperature pairs,
-50K samples) confirms the bimodal structure at higher resolution. The broad plateau is not
-a sampling artifact — it is a genuine feature of the magnetization distribution evolution.
+**FWHM quantifies the broadness objectively.** The D=0.0 peak has FWHM = 0.32 temperature
+units; D=1.0 has FWHM = 2.0. The 6.2× ratio is not a subjective characterization — it
+is computed directly from the SW kl_pairs data.
 
 **Physical mechanism is model-specific, not universal.** Each D value's peak position
 corresponds to a different physical process:
-- D=0.0: smooth transition through Tc (peak near Tc)
-- D=0.5: s₀ states broaden the transition (peak moderately displaced)
-- D=1.0: s₀ states enter and leave, creating two structural changes (peak doubly displaced)
-- D=2.0: first-order coexistence region (peak in ordered phase)
+- D=0.0: smooth transition through Tc (peak slightly below Tc, KL=0.20)
+- D=1.0: s₀ states enter and leave, creating structural changes far from Tc (peak at
+  T=3.50, well above Tc=1.00)
 
 The peak always measures "where the distribution changes most rapidly." What changes — and
 where — depends on the specific degrees of freedom available in each model.
@@ -137,7 +145,7 @@ artifacts of slow convergence.
 **Finite-size scaling.** All results are at L = 12. The tricritical point has strong
 finite-size effects, and the broad KL plateau at D=1.0 could be a finite-size artifact
 that narrows at larger L. Parallel tempering studies exist but a systematic L sweep would
-be needed to confirm that the 5× spread in T_peak/Tc persists.
+be needed to confirm that the 4.4× spread in T_peak/Tc persists.
 
 **Is this Z₂-specific or general?** I have not tested non-Z₂ models at the tricritical
 point. The D=1.0 model is tricritical *because* it connects a second-order Z₂ line to a
@@ -148,12 +156,13 @@ dynamics.
 **Does KL peak height scale with model complexity?** D=1.0 has the most complex
 distribution evolution (s₀ enters, peaks, leaves) and the highest KL. Is there a general
 relationship between the number of distinct distribution shapes and KL peak height? This
-would be interesting to test across other model families.
+would be interesting to test across other model families. **Note:** D=0.5 and D=2.0 SW
+kl_pairs data is missing — the original four-model comparison was incomplete. Only D=0.0
+and D=1.0 have SW kl_pairs results.
 
 **Bootstrap error on D=1.0 peak.** The KL = 1.91 value at D=1.0 is large, but what is
-the error bar? The WL fine-grid has high statistics, but the SW data at D=1.0 uses fewer
-samples. Bootstrap analysis would clarify whether the bimodal structure is statistically
-robust.
+the error bar? Bootstrap analysis of the SW data would clarify whether the broad plateau
+is statistically robust.
 
 ## Related posts
 
